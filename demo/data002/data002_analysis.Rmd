@@ -1,0 +1,321 @@
+---
+title: "Data002: 乳製品ブランドデータ lvsem デモ"
+author: "Analysis"
+date: "`r Sys.Date()`"
+output:
+  html_document:
+    toc: true
+    toc_float: true
+    code_folding: show
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE)
+```
+
+## 概要
+
+このノートは、乳製品ブランドに関する公開データを使った `lvsem` のデモです。
+
+データには、消費者満足、ブランド態度、ブランド選好、購買意図に関する回答が含まれています。
+ここでは、論文で示されている構造に沿って、`CS` から `BA`、`BP`、`PI` へ、
+さらに `BA` から `BP` と `PI` へ、`BP` から `PI` へ向かうモデルを推定します。
+
+分析の流れは次の通りです。
+
+- CSVを読み込む
+- 観測変数ブロックと構造パス行列を定義する
+- `lvsem` で潜在変数スコアを作成する
+- パス係数、効果、R2を推定する
+- bootstrapでパス係数のばらつきを確認する
+- 測定モデルの信頼性、AVE、外部負荷量を確認する
+- モデル図を作成する
+
+## パッケージ
+
+```{r packages}
+rm(list = ls(all = TRUE))
+
+library(lvsem)
+library(ggplot2)
+library(knitr)
+```
+
+## データ読み込み
+
+```{r load_data}
+data_file <- "Data Base.csv"
+data_candidates <- c(
+  file.path("data002", data_file),
+  data_file,
+  file.path("..", "data002", data_file)
+)
+data_path <- data_candidates[file.exists(data_candidates)][1]
+
+if (is.na(data_path)) {
+  stop("CSVファイルが見つかりません: ", data_file)
+}
+
+data_dir <- dirname(data_path)
+
+raw_data <- read.csv(data_path, sep = ";", check.names = TRUE)
+
+dim(raw_data)
+head(raw_data)
+```
+
+## モデル定義
+
+このデモでは、次の4つの潜在変数を使います。
+
+- `CS`: 消費者満足
+- `BA`: ブランド態度
+- `BP`: ブランド選好
+- `PI`: 購買意図
+
+```{r model_definition}
+blocks <- list(
+  CS = paste0("CS", 1:5),
+  BA = paste0("BA", 1:3),
+  BP = paste0("BP", 1:4),
+  PI = paste0("PI", 1:4)
+)
+
+latent_vars <- names(blocks)
+path <- matrix(
+  0,
+  nrow = length(latent_vars),
+  ncol = length(latent_vars),
+  dimnames = list(latent_vars, latent_vars)
+)
+
+path["BA", "CS"] <- 1
+path["BP", c("CS", "BA")] <- 1
+path["PI", c("CS", "BA", "BP")] <- 1
+path
+
+score_relation <- path + t(path)
+score_relation
+```
+
+## 前処理
+
+```{r preprocessing}
+model_vars <- unique(unlist(blocks))
+model_data <- raw_data[, model_vars, drop = FALSE]
+
+model_data[] <- lapply(model_data, function(x) {
+  x <- as.numeric(as.character(x))
+  x[!is.finite(x)] <- NA_real_
+  x
+})
+
+model_data[] <- lapply(model_data, function(x) {
+  ifelse(is.na(x), stats::median(x, na.rm = TRUE), x)
+})
+
+data.frame(
+  samples = nrow(model_data),
+  variables = ncol(model_data)
+)
+```
+
+## 潜在変数スコア
+
+```{r scores}
+lv_scores <- make_lv_scores(model_data, blocks, score_relation)
+
+head(lv_scores)
+round(cor(lv_scores), 3)
+```
+
+## 構造モデル
+
+```{r structural_model}
+path_coefficients <- estimate_paths(lv_scores, path)
+path_effects <- effects_from_beta(path_coefficients)
+
+path_coefficients
+path_effects
+
+r2_values <- sapply(c("BA", "BP", "PI"), function(dv) {
+  preds <- names(which(path[dv, ] == 1))
+  fit <- lm(
+    as.formula(paste(dv, "~", paste(preds, collapse = " + "))),
+    data = as.data.frame(scale(lv_scores))
+  )
+  summary(fit)$r.squared
+})
+
+kable(
+  data.frame(
+    construct = names(r2_values),
+    R2 = round(as.numeric(r2_values), 3)
+  ),
+  caption = "内生潜在変数のR2"
+)
+```
+
+## Bootstrap
+
+```{r bootstrap}
+set.seed(123)
+boot_paths <- bootstrap_paths(
+  model_data,
+  blocks,
+  path,
+  br = 1000,
+  seed = 123,
+  score_matrix = score_relation
+)
+
+kable(
+  data.frame(
+    path = boot_paths$path,
+    round(boot_paths[, c("beta", "boot_se", "t_value")], 3)
+  ),
+  caption = "Bootstrapによる構造パス"
+)
+```
+
+## 測定モデルの要約
+
+```{r measurement}
+measures <- measurement_summary(model_data, blocks, lv_scores)
+
+kable(
+  data.frame(
+    block = measures$reliability$block,
+    round(measures$reliability[, c("alpha", "composite_reliability", "ave")], 3)
+  ),
+  caption = "信頼性とAVE"
+)
+
+kable(
+  data.frame(
+    block = measures$loadings$block,
+    item = measures$loadings$item,
+    loading = round(measures$loadings$loading, 3)
+  ),
+  caption = "外部負荷量"
+)
+```
+
+## モデル図
+
+```{r model_plot, fig.width=11, fig.height=7}
+node_df <- data.frame(
+  block = c("CS", "BA", "BP", "PI"),
+  label = c(
+    "消費者満足\n(CS)",
+    "ブランド態度\n(BA)",
+    "ブランド選好\n(BP)",
+    "購買意図\n(PI)"
+  ),
+  x = c(0, 2.2, 2.2, 4.4),
+  y = c(1.4, 2.2, 0.6, 1.4)
+)
+
+edge_df <- path_coefficients
+edge_split <- strsplit(edge_df$path, "_to_")
+edge_df$from <- vapply(edge_split, `[`, character(1), 1)
+edge_df$to <- vapply(edge_split, `[`, character(1), 2)
+edge_df$label <- sprintf("beta = %.3f", edge_df$beta)
+
+edge_df <- merge(
+  edge_df,
+  node_df[, c("block", "x", "y")],
+  by.x = "from",
+  by.y = "block"
+)
+names(edge_df)[names(edge_df) %in% c("x", "y")] <- c("x_from", "y_from")
+
+edge_df <- merge(
+  edge_df,
+  node_df[, c("block", "x", "y")],
+  by.x = "to",
+  by.y = "block"
+)
+names(edge_df)[names(edge_df) %in% c("x", "y")] <- c("x_to", "y_to")
+
+edge_df$x_label <- (edge_df$x_from + edge_df$x_to) / 2
+edge_df$y_label <- (edge_df$y_from + edge_df$y_to) / 2
+
+item_df <- measures$loadings
+item_df$i <- ave(seq_len(nrow(item_df)), item_df$block, FUN = seq_along)
+item_df$n <- ave(seq_len(nrow(item_df)), item_df$block, FUN = length)
+item_df <- merge(item_df, node_df[, c("block", "x", "y")], by = "block")
+names(item_df)[names(item_df) %in% c("x", "y")] <- c("x_node", "y_node")
+item_df$x <- item_df$x_node
+item_df$y <- item_df$y_node - 0.70 - (item_df$i - 1) * 0.17
+item_df$label <- sprintf("%s %.3f", item_df$item, item_df$loading)
+
+r2_df <- data.frame(
+  block = names(r2_values),
+  r2_label = sprintf("R2 = %.3f", as.numeric(r2_values))
+)
+r2_df <- merge(r2_df, node_df[, c("block", "x", "y")], by = "block")
+
+model_plot <- ggplot() +
+  geom_segment(
+    data = edge_df,
+    aes(x = x_from + 0.45, y = y_from, xend = x_to - 0.45, yend = y_to),
+    arrow = arrow(length = unit(0.22, "cm")),
+    linewidth = 0.8,
+    color = "#2f3a45"
+  ) +
+  geom_label(
+    data = node_df,
+    aes(x = x, y = y, label = label),
+    size = 4.1,
+    fontface = "bold",
+    label.size = 0.35,
+    fill = "#ffffff",
+    color = "#111827"
+  ) +
+  geom_label(
+    data = edge_df,
+    aes(x = x_label, y = y_label + 0.16, label = label),
+    size = 3,
+    label.size = 0,
+    fill = "#ffffff",
+    color = "#111827"
+  ) +
+  geom_label(
+    data = item_df,
+    aes(x = x, y = y, label = label),
+    size = 2.8,
+    label.size = 0.2,
+    fill = "#f7fbff",
+    color = "#2a3340"
+  ) +
+  geom_label(
+    data = r2_df,
+    aes(x = x, y = y + 0.55, label = r2_label),
+    size = 3.1,
+    label.size = 0.25,
+    fill = "#eef7f2",
+    color = "#111827"
+  ) +
+  coord_cartesian(xlim = c(-0.9, 5.3), ylim = c(-0.7, 3.0), clip = "off") +
+  theme_void() +
+  labs(title = "乳製品ブランドデータのlvsemモデル")
+
+model_plot
+
+ggsave(file.path(data_dir, "data002_lvsem_brand_model.png"),
+       model_plot, width = 11, height = 7, dpi = 180)
+```
+
+## 出力の確認
+
+```{r final_output}
+cat("サンプルサイズ:", nrow(model_data), "\n")
+print(round(r2_values, 3))
+```
+
+## 参考
+
+- Boubker & Douayri (2020), Data in Brief, DOI: 10.1016/j.dib.2020.106172
+- ローカルパッケージ: `lvsem`
+- データ: `Data Base.csv`

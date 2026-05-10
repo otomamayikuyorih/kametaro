@@ -1,0 +1,332 @@
+
+---PAGE 1---
+Data in Brief 32 (2020) 106172 
+Contents lists available at ScienceDirect 
+Data in Brief 
+journal homepage: www.elsevier.com/locate/dib 
+Data Article 
+Dataset on the relationship between consumer 
+satisfaction, brand attitude, brand preference 
+and purchase intentions of dairy product: The 
+case of the Laayoune-Sakia El Hamra region in 
+Morocco 
+Omar Boubker a , # , ∗, Khadija Douayri b 
+a Department of Management, Laayoune Higher School of Technology, Ibn Zohr University, Quartier 25 Mars BP 
+3007, Ibn Zohr University, Agadir, Morocco 
+b Higher School of Technology - Mohammed First University Oujda, Morocco 
+a r t i c l e i n f o 
+Article history: 
+Received 22 July 2020 
+Revised 9 August 2020 
+Accepted 10 August 2020 
+Available online 13 August 2020 
+Keywords: 
+Relationship marketing 
+Brand preference 
+Brand attitude 
+Consumer satisfaction 
+Purchase intention 
+PLS-SEM approach 
+a b s t r a c t 
+This data article focuses on the relationship between con- 
+sumer satisfaction, brand attitude, brand preference, and pur- 
+chase intentions. The data was collected from dairy prod- 
+ucts consumers within the Laayoune-Sakia El Hamra region 
+in Morocco. The research data are collected via an on a self- 
+administered online questionnaire, from a sample of 195 Mo- 
+roccan consumers of dairy products (Sakia brand). The data 
+were analysed using a structural equation modeling method 
+under the Partial Least Squares approach (PLS-SEM). Data 
+analysis was performed using SmartPLS 3 software. 
+©2 0 2 0 The Authors. Published by Elsevier Inc. 
+This is an open access article under the CC BY license. 
+( http://creativecommons.org/licenses/by/4.0/ ) 
+∗ Corresponding author(s). 
+E-mail address: o.boubker@uiz.ac.ma (O. Boubker). 
+# Orcid: https://orcid.org/0 0 0 0-0 0 01-6365-2653 
+https://doi.org/10.1016/j.dib.2020.106172 
+2352-3409/© 2020 The Authors. Published by Elsevier Inc. This is an open access article under the CC BY license. 
+( http://creativecommons.org/licenses/by/4.0/ ) 
+---PAGE 2---
+2 O. Boubker and K. Douayri / Data in Brief 32 (2020) 106172 
+Speciﬁcations Table 
+Subject Marketing 
+Speciﬁc subject area Relationship marketing: 
+Type of data Tables and Figures 
+How data were acquired A survey was carried out among Moroccan consumers of the dairy 
+products offered by the Sakia agricultural dairy cooperative. 
+Data format Raw, analyzed and descriptive data 
+Parameters for data collection The sample consisted of consumers of the dairy products offered by 
+the Sakia agricultural dairy cooperative (Sakia brand). The choice of 
+this brand is justiﬁed by its strong cultural reputation among the 
+population of the Laâyoune Sakia El Hamra region. The questionnaire 
+was self-administered via the Google Forms tool during the month of 
+April 2020. 
+Description of data collection The survey link was disseminated via social networks (Facebook, 
+WhatsApp). 
+Data source location Laayoune City/ Laayoune Sakia El Hamra region Morocco; Latitude: 
+31.7945 Longitude: -7.0849. 
+Data accessibility Repository name: Mendeley Data Data identiﬁcation number: 10.17632 
+/ nj9r2k8zp9.4 Direct URL to data: 
+https://data.mendeley.com/datasets/nj9r2k8zp9/4 
+Value of the Data 
+• The dataset is useful because it helps to explain the effect of consumer satisfaction on brand 
+attitude, brand preference and purchase intentions in the context of dairy industry. 
+• This dataset can be used to enlighten dairy industry brand managers on the importance of 
+consumer satisfaction as a key factor to improve brand attitude and brand preference. 
+• This dataset provides insights into diverse aspects of consumer satisfaction, brand attitude, 
+brand preference, and purchase intentions. 
+• With this data, academics and students will ﬁnd a practical example of the SEM-PLS ap- 
+proach use in the relationship marketing area. 
+• The dataset can be adapted for use in other similar contexts such as soft drinks industry. 
+1. Data Description 
+The constructs and measurement items used in this data article were drawn from previous 
+relationship marketing research ( Table 1 ). A questionnaire survey was carried out among Moroc- 
+can consumers of the dairy products offered by the Sakia agricultural dairy cooperative (Sakia 
+brand). The questionnaire was self-administered via the Google Forms tool during the months 
+of April 2020. The data raw and the research questionnaire are available in mendeley data on: 
+https://data.mendeley.com/datasets/nj9r2k8zp9/4 . 
+The proﬁle and characteristics of the SAKIA brand consumers who participated in this survey 
+are illustrated in Table 2 . A total of 195 responses from consumers were received, including 110 
+women (56.4%) and 85 men (43.6%). The age of the respondents varies between 16 and 60 with 
+an average age of 24.9587. Finally, 78.6% of the respondents are single, 19.5% married and 2% 
+divorced. 
+2. Experimental Design, Materials and Methods 
+Fig. 1 , illustrates the research hypotheses based on previous marketing research. The devel- 
+oped model suggests that consumer satisfaction explains brand attitude (H1), brand preference 
+(H2) and purchase intentions (H3). In addition, brand attitude contributes to the explanation of 
+brand preference (H4) and purchase intentions (H5). Finally, the model shows a direct positive 
+and signiﬁcant relationship between brand preference and purchase intentions (H6). To test the 
+---PAGE 3---
+O. Boubker and K. Douayri / Data in Brief 32 (2020) 106172 3 
+Table 1 
+Measurement instruments 
+Variables Adapted Items Scale 
+Consumer satisfaction 
+[1] 
+CS1 I am satisﬁed with my decision to 
+customize the product from this brand. 
+5-point Likert 
+satisfaction scale 
+CS2 Consuming dairy products from this 
+brand is a good idea 
+CS3 I am happy that I customized the 
+product from this brand. 
+CS4 Consuming dairy products of this 
+brand is a good choice 
+CS5 I am disappointed with this brand 
+(reverse scoring) 
+Brand attitude [2] BA1 Unpleasant/ pleasant 5 degree Osgood 
+differential scale BA2 Bad/ good 
+BA3 Unfavourable/favourable 
+Brand preference [3] BP1 I like this brand better than any other 
+brand of dairy products. 
+5-point Likert-scale 
+BP2 I would consume this brand more than 
+any other brand of dairy products... 
+BP3 I would be inclined to buy dairy 
+products from this brand over rather 
+than from other brands. 
+BP4 This is my preferred brand overall 
+brands of dairy products 
+Purchase intentions [4] PI1 What is the likelihood that you would 
+recommend this brand to someone 
+close to you? (1) low; (5) high 
+5-Likert-type scale 
+PI2 You were again consuming dairy 
+products offered by this brand ? 
+PI3 Would you recommend dairy products 
+offered by this brand to a friend and/or 
+relative? 
+PI4 Were you buying products offered by 
+this brand? 
+Table 2 
+Proﬁle and characteristics of respondents (n = 195) 
+Attributes Characteristic Frequency Percentage (%) 
+Gender Male 85 43,60 
+Female 110 56,40 
+Marital 
+status 
+Single 153 78,50 
+Divorced 4 2,00 
+Married 38 19,50 
+Fig. 1. Conceptual framework. 
+---PAGE 4---
+4 O. Boubker and K. Douayri / Data in Brief 32 (2020) 106172 
+Table 3 
+Partial Least Squares Path Modeling Method 
+Steps Criteria Accepted value 
+Step 1. Evaluation of the Measurement Models (Outer model) 
+Convergent validity Individual item 
+reliability 
+Cronbach’s α > 0.7 
+Composite 
+reliability 
+CR > 0.7 
+Factor Loadings Loadings > 0.7 
+Average Variance 
+Extracted 
+AVE > 0.5 
+Discriminant 
+validity 
+Variable correlation 
+(Root square of 
+AVE) 
+The AVE of each latent construct should higher 
+than the construct’s highest squared correlation 
+with any other latent construct. 
+Cross loadings The loading of an indicator on its assigned latent 
+variable should be higher than its loadings on all 
+other latent variables 
+Step 2. Evaluation of the Structural Model (Inner model) 
+Coeﬃcient of determination of the endogenous 
+constructs (R-square) 
+R ² < 0.19 Unacceptable 
+0.19 ≤ R ² < 0.33 Weak 
+0.33 ≤ R ² < 0.67 Moderate 
+R ² ≥ 0.67 Substantial 
+Effect size (f 2 ) f 2 < 0.02 No effect size 
+0.02 ≤ f 2 < 0.15 Small effect size 
+0.15 ≤ f 2 < 0.35 Medium effect size 
+f 2 ≥ 0.35 Large effect size. 
+Predictive relevance (Q 2 ) Q 2 > 0 Acceptable validity 
+Q 2 < 0 No validity 
+Hypotheses Testing (Path Coeﬃcient & t-value) t-value = 1.96 →  Sig. at p-value < 0.05 ∗; 
+t = 2.58 →  Sig. at p-value < 0.01 ∗∗; 
+t = 3.29 →  Sign. at p-value < 0.001 ∗∗∗. 
+Goodness of Fit of the Model 
+(GoF) GoF = 
+√ 
+( R 2 × AV E ) 
+GoF < 0.10 No ﬁt 
+0.1 ≤ GoF < 0.25 Small 
+0.25 ≤ GoF < 0.36 
+Medium 
+GoF ≥ 0.36 Large 
+hypotheses and the research model, we used the structural equations method under the Partial 
+Least Squares approach (PLS-SEM). As indicated in Table 3 , the implementation of this method 
+takes place in two steps [5] . The ﬁrst one consists of assessing the reliability and validity of the 
+measurement models, while the second step focuses on assessing the ﬁt of the structural model. 
+Data analysis was performed using SmartPLS 3 software [6] . 
+Table 4 shows the summary of the convergent validity, according to several criteria: indi- 
+vidual item reliability (Cronbach’s alpha > 0.7), composite reliability (CR > 0.7), factor loadings 
+(Outer loading > 0.7) and average variance extracted (AVE > 0.5). The outputs illustrated in the 
+tables ( Table 5 & Table 6 ) make it possible to verify the discriminant validity of the latent vari- 
+ables, in terms of the variable correlation [7] and the cross-loading criterion [8] . The SEM-PLS 
+estimation for the measurement and structural model are shown in Fig. 2 . 
+The values of the coeﬃcient of determination of the couple endogenous latent variables; 
+brand attitude and brand preference are moderated, which are 0.340 and 0.479 respectively. The 
+purchase intentions are explained at 73.4% (R ² = 0.734 ≥ 0.67). This indicates a substantial level 
+of determination. The size effect (f 2 ) values are all acceptable ( Table 7 ). 
+The Predictive relevance (Q 2 ) values are all greater than zero, which makes it possible to 
+consider that the model has an acceptable predictive quality [5] . The ﬁt of the global model 
+(GoF) is very strong, with a value of 0.657 [9] . According to SmartPLS outputs, it turns out that 
+consumer satisfaction greatly contributes to the explanation of brand attitude, brand preference 
+and purchase intentions. Likewise, the brand attitude has a positive and signiﬁcant effect on 
+---PAGE 5---
+O. Boubker and K. Douayri / Data in Brief 32 (2020) 106172 5 
+Table 4 
+Convergent validity 
+Constructs Items Outer loading ( > 0.7) Cronbach’s alpha ( > 0.7) Rho-A ( > 0.7) CR ( > 0.7) AVE ( > 0.5) 
+Consumer 
+satisfaction (CS) 
+CS1 0.928 0.945 0.953 0.959 0.825 
+CS2 0.939 
+CS3 0.947 
+CS4 0.942 
+CS5 0.772 
+Brand attitude 
+(BA) 
+BA1 0.935 0.927 0.927 0.953 0.872 
+BA2 0.937 
+BA3 0.929 
+Brand 
+Preference (BP) 
+BP1 0.937 0.958 0.959 0.970 0.889 
+BP2 0.943 
+BP3 0.949 
+BP4 0.942 
+Purchase 
+Intentions (PI) 
+PI1 0.726 0.886 0.889 0.923 0.751 
+PI2 0.924 
+PI3 0.894 
+Table 5 
+Discriminant validity (Fornell-Larcker criterion). 
+Constructs BA BP CS PI 
+Brand Attitude (BA) 0.934 ∗
+Brand Preference (BP) 0.529 0.943 ∗
+Consumer satisfaction (CS) 0.583 0.671 0.908 ∗
+Purchase Intentions (PI) 0.694 0.717 0.779 0.867 ∗
+∗ Root square of AVE 
+Table 6 
+Discriminant Validity - Loading and Cross-Loading criterion. 
+Brand Attitude Brand Preference Consumer satisfaction Purchase Intentions 
+BA1 0.935 0.490 0.540 0.636 
+BA2 0.937 0.495 0.540 0.644 
+BA3 0.929 0.497 0.553 0.663 
+BP1 0.497 0.937 0.647 0.690 
+BP2 0.474 0.943 0.631 0.657 
+BP3 0.531 0.949 0.633 0.706 
+BP4 0.491 0.942 0.619 0.649 
+CS1 0.597 0.608 0.928 0.760 
+CS2 0.466 0.642 0.939 0.704 
+CS3 0.574 0.658 0.947 0.722 
+CS4 0.545 0.638 0.942 0.748 
+CS5 0.451 0.486 0.772 0.586 
+PI1 0.818 0.512 0.555 0.726 
+PI2 0.578 0.693 0.749 0.924 
+PI3 0.472 0.634 0.652 0.894 
+PI4 0.527 0.634 0.726 0.909 
+Table 7 
+Effect size. 
+Constructs Effect size (f 2 ) Signiﬁcation 
+Consumer 
+satisfaction 
+Brand Attitude 0.515 Large effect size 
+Brand Preference 0.382 Large effect size 
+Purchase Intentions 0.308 Medium effect size 
+Brand 
+Attitude 
+Brand Preference 0.055 Small effect size 
+Purchase Intentions 0.219 Medium effect size 
+Brand Preference Purchase Intentions 0.151 Medium effect size 
+---PAGE 6---
+6 O. Boubker and K. Douayri / Data in Brief 32 (2020) 106172 
+Fig. 2. Measurement and structural model - Output SmartPLS. 
+Fig. 3. Structural equation model analysis. 
+brand preference and purchase intentions ( Fig. 3 ). On the other hand, brand preference has a 
+signiﬁcant effect on the purchase intentions. 
+Ethics Statement 
+The consent of respondents was obtained. The online questionnaire was completely anony- 
+mous and does not contain any information allowing identifying the respondent. 
+Declaration of Competing Interest 
+The authors declare that they have not known competing ﬁnancial interests or personal re- 
+lationships, which have, or could be perceived to have, inﬂuenced the work reported in this 
+article. 
+---PAGE 7---
+O. Boubker and K. Douayri / Data in Brief 32 (2020) 106172 7 
+Acknowledgments 
+The authors would like to thank all the participants of Laayoune Sakia El Hamra region who 
+contributed their time to answer our questions and participated in our survey. 
+Supplementary materials 
+Supplementary material associated with this article can be found, in the online version, at 
+doi:10.1016/j.dib.2020.106172 . 
+References 
+[1] R.L. Oliver, A cognitive model of the antecedents and consequences of satisfaction decisions, J. Mark. Res. 17 (4) 
+(1980) 460–469, doi: 10.1177/0 022243780 0170 0405 . 
+[2] N. Spears, S.N. Singh, Measuring attitude toward the brand and purchase intentions, J. Curr. Issues Res. Advert. 26 
+(2) (sept. 2004) 53–66, doi: 10.1080/10641734.2004.10505164 . 
+[3] M.J. Sirgy, et al., Assessing the predictive validity of two methods of measuring self-image congruence », J. Acad. 
+Mark. Sci. 25 (3) (1997) 229–241, doi: 10.1177/0 0920703972530 04 . 
+[4] V.A. Zeithaml, L.L. Berry, A. Parasuraman, The behavioral consequences of service quality, J. Mark. 60 (2) (1996) 31–
+46, doi: 10.1177/0 022242996060 0 0203 . 
+[5] J.F. Hair, J.J. Risher, M. Sarstedt, C.M. Ringle, «W h e n to use and how to report the results of PLS-SEM », Eur. Bus. Rev. 
+31 (1) (2019) 2–24, doi: 10.1108/EBR- 11- 2018- 0203 . 
+[6] C.M. Ringle , S. Wende , J.M. Becker , SmartPLS 3., Boenningstedt: SmartPLS GmbH (2015) . 
+[7] C. Fornell et, D.F. Larcker, Evaluating structural equation models with unobservable variables and measurement error 
+», J. Mark. Res. 18 (1) (1981) 39–50, doi: 10.1177/002224378101800104 . 
+[8] J.F. Hair, C.M. Ringle, et M. Sarstedt, PLS-SEM: Indeed a Silver Bullet, J. Mark. Theory Pract. 19 (2) (2011) 139–152, 
+doi: 10.2753/MTP1069-6679190202 . 
+[9] M. Wetzels, G. Odekerken-Schröder, et C. van Oppen, «U s i n g PLS path modeling for assessing hierarchical construct 
+models: guidelines and empirical illustration, MIS Q 33 (1) (2009) 177–195, doi: 10.2307/20650284 . 
