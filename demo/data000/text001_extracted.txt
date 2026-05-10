@@ -1,0 +1,244 @@
+
+---PAGE 1---
+ 
+Iteration-Free PLS-SEM via Multiset PLS 
+ 
+Hiroyuki Yamamoto 
+h.yama2396@gmail.com 
+ 
+Japan Computational Mass Spectrometry (JCompMS) group 
+ 
+Abstract 
+Partial Least Squares Structural Equation Modeling (PLS-SEM) is widely used in social 
+sciences and business research, and its estimation is typically performed using iterative 
+algorithms such as NIPALS. In this study, we reformulate PLS-SEM within the framework of 
+multiset partial least squares, showing that both interpretation and computation can be 
+carried out without explicitly introducing iterative procedures. Using a demo dataset, we 
+confirm that the proposed formulation yields results numerically equivalent to those 
+obtained by conventional PLS-SEM. We further demonstrate the applicability of the 
+approach through an analysis of well-being survey data. 
+ 
+Keyword  partial least squares; PLS-SEM; multiset PLS; structural equation modeling; well-
+being 
+ 
+  
+---PAGE 2---
+マルチセット PLS に基づく繰り返し計算を必要としない PLS-SEM 
+質量分析インフォマティクス研究会 山本 博之 h.yama2396@gmail.com 
+ 
+Abstract 
+PLS-SEM（Partial Least Squares Structural Equation Modeling）は、社会科学やビジネス
+分野を中心に広く用いられている構造方程式モデリング手法であり、その推定は一般に
+NIPALS アルゴリズムなどの反復的計算に基づいて行われている。本研究では、PLS-SEM
+をマルチセット PLS の枠組みの中で再定式化し、反復的な推定手順を明示的に導入するこ
+となく、潜在変数スコアおよび構造関係を一括的に求められることを示す。デモデータを
+用いて、提案する定式化が従来の反復型 PLS-SEM と数値的に等価な結果を与えることを
+確認するとともに、応用例としてウェルビーイング調査データへの適用を示す。 
+ 
+Introduction 
+PLS-SEM（Partial Least Squares Structural Equation Modeling）は、潜在変数間の関係
+をモデル化する構造方程式モデリングの一種として、マーケティング 、心理学、教育学な
+どの分野を中心に広く利用されている。特に、サンプルサイズが比較的小さい場合や、厳
+密な分布仮定を置きにくい状況においても適用可能である点が、PLS-SEM の大きな利点
+として知られている（Chin, 1998; Tenenhaus et al., 2005）。 
+PLS-SEM の推定は、一般に NIPALS アルゴリズムに代表される反復的な計算手順に基
+づいて行われる。潜在変数スコアとパス係数を交互に更新しながら収束解を求めるという
+枠組みは、PLS-SEM の特徴として広く受け入れられており、多くのソフトウェア実装に
+おいても標準的に採用されている（Wold, 1982; Ringle et al., 2005）。 
+一方で、この反復的な推定手順は、PLS-SEM が本質的にどのような最適化問題を解い
+ているのか、また主成分分析（PCA）や正準相関分析（CCA）などの他の多変量解析手法
+とどのような関係にあるのかを理解する上で、必ずしも直感的とは言えない側面を持つ。
+その結果、PLS-SEM は実用面では広く用いられている一方で、その計算構造や理論的位
+置づけについては十分に整理されているとは言い難い（Vinzi et al., 2010）。 
+この点に関連して、PLS path modeling とマルチブロックデータ解析との関係について
+は、理論的観点から明示的に議論されてきた。特に、PLS-SEM はマルチブロック解析や
+一般化正準相関分析（Generalized CCA）の枠組みの中で理解可能であり、複数の潜在変
+数ブロック間の関係を扱う特殊な構成として位置づけられることが示されている
+---PAGE 3---
+（Tenenhaus & Vinzi, 2010; Tenenhaus & Vinzi, 2014）。 
+マルチセット PLS（multiset PLS）は、複数のデータブロック間に共通する構造を抽出
+するための PLS の一般化として提案されており、マルチブロックデータを一括して扱う枠
+組みを提供する。近年では、ブロック間の順位関係や構造的制約を導入した拡張手法も提
+案されており、性質の異なる複数のデータブロックを統合的に解析する場面において有効
+であることが示されている（Yamamoto, 2022） 。実際に、マルチセット PLS に基づくアプ
+ローチはマルチオミクス解析に応用され、生物学的に解釈可能な結果を与えることが報告
+されている（Kiuchi et al., 2025）。 
+本稿では、マルチセット PLS の枠組みを用いて PLS-SEM を再定式化し、反復的な推定
+手順を明示的に導入することなく、潜在変数スコアおよび構造関係を求められることを示
+す。本定式化は、新たな推定アルゴリズムを提案するものではなく、PLS-SEM を既存の
+多変量解析理論の中に位置づけ直す試みである（Wold, 1966） 。さらに、デモデータによる
+数値的検証とウェルビーイング調査データへの応用を通じて、本手法が理論的整理にとど
+まらず 、実データ解析においても適用可能であることを確認する。 
+ 
+Method 
+Multiset PLS framework 
+マルチセット PLS（multiset partial least squares）は、複数のデータブロック間に存在
+する共通構造を抽出することを目的とした部分最小二乗法（PLS）の一般化として位置づ
+けられる手法である。各データブロックから潜在スコアを推定し、それらの間の共分散あ
+るいは相関構造を最大化するように重みを求める枠組みを持ち、正準相関分析（CCA）お
+よび一般化正準相関分析（GCCA）と理論的に密接な関係を有する。 
+マルチセット PLS では、各ブロックは同時に扱われ、ブロック内の分散構造とブロック
+間の関連構造が統一的に考慮される。この点において、単一ブロックを対象とする主成分
+分析（PCA）や 、二つのブロックを対象とする CCA を自然に包含する枠組みと理解でき
+る。 
+Reformulation of PLS-SEM as a multiset PLS problem 
+本研究では、PLS-SEM における各潜在変数ブロックを、マルチセット PLS における個
+別のデータブロックとして定式化する。この対応づけにより、PLS-SEM の推定問題は、
+マルチセット PLS の枠組みの中で統一的に記述される。 
+PLS-SEM における外部モデルは、各観測変数ブロックから潜在変数スコアを抽出する
+関係を定義するものであり、これはマルチセット PLS におけるブロック内構造に対応す
+る。一方、潜在変数間の構造方程式モデル（内部モデル）は、マルチセット PLS における
+ブロック間の関連構造として表現される。 
+すなわち、潜在変数間のパス関係は、ブロック間の結合を規定する重み行列として導入
+され、どの潜在変数ブロックがどの程度関連づけられるかを明示的に定義する役割を果た
+---PAGE 4---
+す。 
+Iteration-free estimation 
+この定式化に基づけば、PLS-SEM で一般に用いられる潜在変数スコアとパス係数を交
+互に更新する反復的推定手順を、明示的に導入する必要はない。潜在変数スコアは、ブロ
+ック間の関連構造を反映した一括的な最適化問題として定義され、固有値問題あるいは行
+列分解として直接求めることが可能となる。 
+したがって、PLS-SEM は反復計算を前提とする推定手法としてではなく、マルチセッ
+ト PLS の特殊な構成として、反復計算を伴わない形で定式化・計算される。この性質は、
+新たな計算アルゴリズムを導入した結果ではなく、問題の定式化をマルチセット PLS の枠
+組みに置き換えたことから自然に導かれるものである。 
+Relationship to existing PLS-SEM estimation 
+この枠組みによって得られる潜在変数スコアおよび構造関係は、従来の反復型 PLS-
+SEM によって得られる結果と数値的に等価である（符号反転を除く） 。したがって、本研
+究の定式化は、従来法を否定するものではなく、その計算構造を整理し、既存の多変量解
+析理論の中に位置づけ直すものである。 
+Implementation 
+本研究で用いた手法は R 言語により実装されており、解析の再現性を確保するため、
+実装コードは lvsem パッケージ(https://github.com/otomamayikuyorih/lvsem)として公開
+している。これにより、本研究の解析は第三者による検証および応用が可能である。 
+ 
+Results and Discussion 
+3.1 デモデータによる確認 
+本研究では、提案する「マルチセット PLS に基づく iteration-free PLS-SEM」の実装
+が、既存の PLS-SEM 推定と同一の解（符号反転を除く）を与えることを、公開デモデー
+タを用いて確認した。 
+R パッケージ plspm に含まれる satisfaction データを用い、6 つの潜在変数（IMAG, 
+EXPE, QUAL, VAL, SAT, LOY）をそれぞれ対応する観測変数ブロックから構成した。構
+造モデル（inner model）は既存例に従い、EXPE→QUAL/VAL/SAT、
+QUAL→VAL/SAT、VAL→SAT、SAT→LOY 等のパスを含むパス行列として定義した。 
+まず 、各ブロックを入力として loadings によりマルチセット PLS を実行し、各潜在変
+数の第 1 成分スコアを抽出した。次に、得られた潜在変数スコアに対して、パス行列で指
+定した回帰関係に基づきパス係数行列を推定し、直接効果・間接効果・総効果を計算し
+た。 
+比較対象として、同一のデータ・同一のパス行列・同一のブロック定義のもとで、
+plspm による通常の PLS-SEM（モード A、スケーリングあり）を実行し効果を取得し
+た。その結果、提案法（マルチセット PLS 由来の潜在変数スコア＋回帰によるパス推定）
+---PAGE 5---
+と、plspm による従来の PLS-SEM は、潜在変数スコアおよびパス係数において符号の違
+いを除いて一致することが確認された。 
+表 1 に、マルチセット PLS に基づく iteration-free PLS-SEM と、plspm による従来の
+PLS-SEM で推定されたパス係数の比較結果を示す 。すべてのパスにおいて両手法の推定値
+は極めて近く、最大の絶対差は 0.002 未満であった。 
+ 
+表 1：マルチセット PLS と PLS-SEM のパス係数比較（内生変数別） 
+内生変数 パス Multiset PLS PLS-SEM 差 
+EXPE IMAG → EXPE 0.5619 0.56 0.00193 
+QUAL EXPE → QUAL 0.8455 0.8456 0.00002 
+VAL EXPE → VAL 0.1188 0.1191 0.00034  
+QUAL → VAL 0.66 0.6598 0.00021 
+SAT IMAG → SAT 0.1841 0.1833 0.00081  
+EXPE → SAT 0.0066 0.0072 0.00057  
+QUAL → SAT 0.1396 0.1389 0.00068  
+VAL → SAT 0.5818 0.5821 0.00038 
+LOY IMAG → LOY 0.2916 0.2916 0.00003 
+  SAT → LOY 0.4705 0.4697 0.00086 
+ 
+これらの差は、反復計算の有無や数値計算上の丸め誤差に起因するものと考えられる。
+本結果は、マルチセット PLS を用いることで、反復計算を行わずに従来の PLS-SEM と数
+値的に同等のパス係数推定が可能であることを示している。 
+ 
+3.2 ウェルビーイングデータへの応用 
+実データへの適用例として、高松市において実施されたウェルビーイング調査データを
+用い、本手法の有効性を検証した。本データは、幸福度・満足度、健康状態、社会的つな
+がり、生活環境、経済・文化的要因など、主観的ウェルビーイングを構成する複数の質問
+項目から成り、潜在変数モデルによる解析に適した構造を有している。 
+本研究では、これらの質問項目を概念的に関連する指標群ごとに 5 つのブロック
+（Wellbeing, Health, Social, Env, EcoCult）に分割し、主観的ウェルビーイング
+（Wellbeing）を被説明潜在変数とする PLS-SEM としてモデル化した。ブロック間の関係
+は、Wellbeing と各説明ブロックのみが結合するスター型構造を仮定し、マルチセット
+PLS に基づく反復計算を伴わない（iteration-free）潜在変数推定を行った。 
+各ブロックについて第 1 成分を潜在変数スコアとして抽出し、Wellbeing を目的変数、
+Health、Social、Env、EcoCult を説明変数とする構造モデルを推定した。その結果、すべ
+---PAGE 6---
+ての説明潜在変数が Wellbeing に対して統計的に有意な正の影響を示した（表 2） 。特に、
+健康（Health） 、社会的つながり（Social） 、および経済・文化的要因（EcoCult）は比較的
+大きな回帰係数を示し、主観的ウェルビーイングにおいて重要な役割を果たしていること
+が示唆された。 
+モデル全体の決定係数は 𝑅2 = 0.655（調整済み 𝑅2 = 0.641）であり、Wellbeing 潜在ス
+コアの約 65%がこれら 4 つの要因によって説明された。これは、反復型 PLS-SEM を用い
+た先行研究と同程度の説明力であり、本手法が実データ解析においても十分な性能を有す
+ることを示している。 
+ 
+表 2：Wellbeing を目的変数とする構造モデルの推定結果 
+説明変数 回帰係数 標準誤差 t 値 p 値 
+Health 0.668 0.256 2.61 0.0106 
+Social 0.656 0.205 3.2 0.0019 
+Env 0.487 0.169 2.88 0.0049 
+EcoCult 0.425 0.128 3.31 0.0013 
+ 
+これらの結果は、主観的ウェルビーイングが単一の要因によって規定されるのではな
+く、健康、社会的つながり、生活環境、経済・文化的要因といった複数の側面から構成さ
+れる多面的な概念であることを示している。特に、Health および Social が比較的大きな
+回帰係数を示した点は、身体的・精神的健康状態や他者との関係性が、主観的な幸福感に
+おいて重要な役割を果たしていることを示唆している。 
+一方で、Env や EcoCult も統計的に有意な正の影響を示しており、居住環境や経済・
+文化的要因といった構造的要因が、ウェルビーイングの基盤として寄与していることが確
+認された。本解析では各ブロックの第 1 成分を潜在変数スコアとして用いており、概念レ
+ベルでの関係性に焦点を当てることで、安定した構造的関係が得られている。 
+以上の結果は、マルチセット PLS に基づく iteration-free な PLS-SEM が、従来法と整
+合的な推定結果を与えるとともに、実際の社会調査データに対しても解釈可能で一貫した
+構造的知見を提供できることを示している。 
+ 
+Conclusion 
+本研究では、PLS-SEM をマルチセット PLS の枠組みで再定式化することにより、反復
+的な推定手順を明示的に導入することなく、潜在変数スコアおよび構造関係を一括的に推
+定できることを示した。この定式化に基づく推定は、従来の反復型 PLS-SEM と数値的に
+等価な結果を与え、PLS-SEM がマルチセット PLS の特殊な構成として理解可能であるこ
+とを明確にするものである。 
+本研究の貢献は、新たな推定アルゴリズムを提案することではなく、PLS-SEM の計算
+---PAGE 7---
+構造を整理し、既存の多変量解析理論の中に統一的に位置づけ直した点にある。さらに、
+デモデータおよび実データ解析を通じて、本定式化が理論的整理にとどまらず 、実際のデ
+ータ解析においてもそのまま適用可能であることを確認した。 
+ 
+References 
+1.  Herman Wold (1966). 
+Estimation of principal components and related models by iterative least squares. 
+In Multivariate Analysis, Academic Press, pp. 391–420. 
+2.  Herman Wold (1982). 
+Soft modeling: the basic design and some extensions. 
+In Systems under Indirect Observation, Part II, North-Holland, pp. 1–54. 
+3.  Wynne W. Chin (1998). 
+The partial least squares approach to structural equation modeling. 
+In Modern Methods for Business Research, Lawrence Erlbaum Associates, pp. 295–336. 
+4.  Michel Tenenhaus, Vinzi, V. E., Chatelin, Y.-M., & Lauro, C. (2005). 
+PLS path modeling. 
+Computational Statistics & Data Analysis, 48(1), 159–205. 
+5.  Vinzi Vincenzo, Trinchera, L., & Amato, S. (2010). 
+PLS path modeling: From foundations to recent developments and open issues. 
+Statistics Surveys, 4, 47–82. 
+6.  Michel Tenenhaus, & Vinzi Vincenzo (2010). 
+A bridge between PLS path modeling and multi-block data analysis. 
+In Handbook of Partial Least Squares, Springer, pp. 99–123. 
+DOI: 10.1007/978-3-540-32827-8_5 
+7.  Michel Tenenhaus, & Vinzi Vincenzo (2014). 
+PLS path modeling and generalized canonical correlation analysis. 
+Journal of Chemometrics, 28(8), 563–570. 
+8.  Abdi Hervé, Williams, L. J., & Valentin, D. (2013). 
+Multiple factor analysis: Principal component analysis for multitable and multiblock data 
+sets. 
+WIREs Computational Statistics, 5(2), 149–179. 
+9.  Yamamoto, H. (2022). 
+Multiset partial least squares with rank order of groups for integrating multi-omics data. 
+bioRxiv. https://doi.org/10.1101/2022.08.30.505949 
+10.  Kiuchi, S., Chung, M. H., Sakai, H., Nakaya, T., Ohbuchi, K., Tsumagari, K., Imami, 
+K., Otoguro, Y., Nitta, T., Yamamoto, H., Sasaki, K., & Tsugawa, H. (2025). 
+---PAGE 8---
+Unraveling anti-inflammatory metabolic signatures of Glycyrrhiza uralensis and 
+isoliquiritigenin through multiomics. 
+npj Systems Biology and Applications, 11, 145. 
