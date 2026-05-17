@@ -1,0 +1,381 @@
+---
+title: "Data003: SCRM受注データのlvsem再解析"
+author: "Analysis"
+date: "`r Sys.Date()`"
+output:
+  html_document:
+    toc: true
+    toc_float: true
+    code_folding: show
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE)
+```
+
+## 概要
+
+このノートブックでは、サプライチェーンリスク管理データを再解析します。
+データは医療機器の生産受注を想定した合成データで、450件の受注レベル
+観測値を含みます。
+
+PLS-SEMモデルでは、以下の7つの潜在変数を設定します。
+
+- `SCR_Risk`: サプライチェーンリスクの露出度
+- `SCRM_Practices`: リスク管理実践
+- `Trace_Info`: トレーサビリティと情報品質
+- `Cost_Var`: 単位コストの変動性
+- `NoQ_Cost`: 非品質コストと不良関連指標
+- `Op_Perf`: オペレーション成果
+- `Econ_Perf`: 経済的成果
+
+構造モデルでは、リスク露出度とSCRM実践がトレーサビリティ、コスト変動、
+品質コスト、オペレーション成果、経済的成果に影響すると仮定します。
+また、トレーサビリティを媒介変数として扱い、コスト・品質関連の成果が
+最終的な業績に影響する構造を確認します。
+
+## パッケージ
+
+```{r packages}
+rm(list = ls(all = TRUE))
+
+library(lvsem)
+library(ggplot2)
+library(knitr)
+```
+
+## データ読み込み
+
+```{r load_data}
+data_file <- "SCRM_Orders_Dataset_450.csv"
+data_candidates <- c(
+  file.path("data003", data_file),
+  data_file,
+  file.path("..", "data003", data_file)
+)
+data_path <- data_candidates[file.exists(data_candidates)][1]
+
+if (is.na(data_path)) {
+  stop("CSVファイルが見つかりません: ", data_file)
+}
+
+data_dir <- dirname(data_path)
+raw_data <- read.csv(data_path, check.names = TRUE)
+
+dim(raw_data)
+head(raw_data)
+```
+
+## モデル定義
+
+```{r model_definition}
+minmax <- function(x) {
+  rng <- range(x, na.rm = TRUE)
+  if (!is.finite(rng[1]) || diff(rng) == 0) {
+    return(rep(0, length(x)))
+  }
+  (x - rng[1]) / diff(rng)
+}
+
+raw_data$breakeven_efficiency <- 1 - minmax(raw_data$breakeven_units)
+
+blocks <- list(
+  SCR_Risk = c(
+    "supplier_delay_rate",
+    "inbound_damage_rate",
+    "storage_loss_rate",
+    "process_rework_trigger_rate",
+    "distribution_delay_rate",
+    "stockout_rate"
+  ),
+  SCRM_Practices = c(
+    "supplier_audit_score",
+    "monitoring_frequency_per_month",
+    "contingency_maturity_likert",
+    "collaboration_index"
+  ),
+  Trace_Info = c(
+    "traceability_completeness",
+    "data_accuracy",
+    "inspection_coverage"
+  ),
+  Cost_Var = c(
+    "cost_var_metric",
+    "unit_cost_sd_cop"
+  ),
+  NoQ_Cost = c(
+    "noq_metric",
+    "scrap_rate",
+    "rework_rate",
+    "nonconformity_rate"
+  ),
+  Op_Perf = c(
+    "on_time_delivery",
+    "cycle_time_hours_inv"
+  ),
+  Econ_Perf = c(
+    "margin_pct",
+    "breakeven_efficiency"
+  )
+)
+
+block_summary <- data.frame(
+  block = names(blocks),
+  item_count = vapply(blocks, length, integer(1))
+)
+kable(block_summary, caption = "測定ブロック")
+
+latent_vars <- names(blocks)
+path <- matrix(
+  0,
+  nrow = length(latent_vars),
+  ncol = length(latent_vars),
+  dimnames = list(latent_vars, latent_vars)
+)
+
+path["Trace_Info", c("SCR_Risk", "SCRM_Practices")] <- 1
+path["Cost_Var", c("SCR_Risk", "SCRM_Practices", "Trace_Info")] <- 1
+path["NoQ_Cost", c("SCR_Risk", "SCRM_Practices", "Trace_Info")] <- 1
+path["Op_Perf", c("SCR_Risk", "SCRM_Practices", "Trace_Info", "Cost_Var", "NoQ_Cost")] <- 1
+path["Econ_Perf", c("SCR_Risk", "SCRM_Practices", "Trace_Info", "Cost_Var", "NoQ_Cost", "Op_Perf")] <- 1
+
+path
+
+score_relation <- path + t(path)
+score_relation
+```
+
+## 前処理
+
+```{r preprocessing}
+model_vars <- unique(unlist(blocks))
+model_data <- raw_data[, model_vars, drop = FALSE]
+
+model_data[] <- lapply(model_data, function(x) {
+  x <- as.numeric(as.character(x))
+  x[!is.finite(x)] <- NA_real_
+  x
+})
+
+too_constant <- vapply(model_data, function(x) {
+  observed <- x[!is.na(x)]
+  if (!length(observed)) {
+    return(TRUE)
+  }
+  stats::sd(observed) == 0 || max(table(observed)) / length(observed) >= 0.95
+}, logical(1))
+
+if (any(too_constant)) {
+  model_data <- model_data[, !too_constant, drop = FALSE]
+  blocks <- lapply(blocks, function(x) intersect(x, names(model_data)))
+}
+
+empty_blocks <- vapply(blocks, length, integer(1)) == 0
+if (any(empty_blocks)) {
+  stop("前処理後に空になった測定ブロックがあります: ",
+       paste(names(blocks)[empty_blocks], collapse = ", "))
+}
+
+model_data[] <- lapply(model_data, function(x) {
+  ifelse(is.na(x), stats::median(x, na.rm = TRUE), x)
+})
+
+data.frame(
+  samples = nrow(model_data),
+  variables = ncol(model_data),
+  removed_constant_variables = sum(too_constant),
+  removed_variable_names = paste(names(too_constant)[too_constant], collapse = ", ")
+)
+```
+
+## 潜在変数スコア
+
+```{r scores}
+lv_scores <- make_lv_scores(model_data, blocks, score_relation)
+
+head(lv_scores)
+round(cor(lv_scores), 3)
+```
+
+## 構造モデル
+
+```{r structural_model}
+path_coefficients <- estimate_paths(lv_scores, path, scale_scores = FALSE)
+path_effects <- effects_from_beta(path_coefficients)
+
+path_coefficients
+path_effects
+
+endogenous_vars <- rownames(path)[rowSums(path) > 0]
+r2_values <- sapply(endogenous_vars, function(dv) {
+  preds <- names(which(path[dv, ] == 1))
+  fit <- lm(
+    as.formula(paste(dv, "~", paste(preds, collapse = " + "))),
+    data = as.data.frame(lv_scores)
+  )
+  summary(fit)$r.squared
+})
+
+kable(
+  data.frame(
+    construct = names(r2_values),
+    R2 = round(as.numeric(r2_values), 3)
+  ),
+  caption = "内生潜在変数のR2"
+)
+```
+
+## Bootstrap
+
+```{r bootstrap}
+set.seed(123)
+boot_paths <- bootstrap_paths(
+  model_data,
+  blocks,
+  path,
+  br = 1000,
+  seed = 123,
+  score_matrix = score_relation
+)
+
+kable(
+  data.frame(
+    path = boot_paths$path,
+    round(boot_paths[, c("beta", "boot_se", "t_value")], 3)
+  ),
+  caption = "Bootstrapによるパス推定"
+)
+```
+
+## 測定モデル
+
+```{r measurement}
+measures <- measurement_summary(model_data, blocks, lv_scores)
+
+kable(
+  data.frame(
+    block = measures$reliability$block,
+    round(measures$reliability[, c("alpha", "composite_reliability", "ave")], 3)
+  ),
+  caption = "信頼性とAVE"
+)
+
+kable(
+  data.frame(
+    block = measures$loadings$block,
+    item = measures$loadings$item,
+    loading = round(measures$loadings$loading, 3)
+  ),
+  caption = "外部負荷量"
+)
+```
+
+## モデル図
+
+```{r model_plot, fig.width=12, fig.height=8}
+node_df <- data.frame(
+  block = c("SCR_Risk", "SCRM_Practices", "Trace_Info", "Cost_Var", "NoQ_Cost", "Op_Perf", "Econ_Perf"),
+  label = c(
+    "サプライチェーン\nリスク\n(SCR_Risk)",
+    "SCRM実践\n(SCRM_Practices)",
+    "トレーサビリティ\n情報品質\n(Trace_Info)",
+    "コスト変動\n(Cost_Var)",
+    "非品質コスト\n(NoQ_Cost)",
+    "オペレーション\n成果\n(Op_Perf)",
+    "経済的成果\n(Econ_Perf)"
+  ),
+  x = c(0, 0, 2.0, 4.0, 4.0, 6.0, 8.0),
+  y = c(2.2, 0.8, 1.5, 2.25, 0.75, 1.5, 1.5),
+  stringsAsFactors = FALSE
+)
+
+edge_df <- path_coefficients
+edge_split <- strsplit(edge_df$path, "_to_")
+edge_df$from <- vapply(edge_split, `[`, character(1), 1)
+edge_df$to <- vapply(edge_split, `[`, character(1), 2)
+edge_df$label <- sprintf("beta = %.3f", edge_df$beta)
+
+edge_df <- merge(
+  edge_df,
+  node_df[, c("block", "x", "y")],
+  by.x = "from",
+  by.y = "block"
+)
+names(edge_df)[names(edge_df) %in% c("x", "y")] <- c("x_from", "y_from")
+
+edge_df <- merge(
+  edge_df,
+  node_df[, c("block", "x", "y")],
+  by.x = "to",
+  by.y = "block"
+)
+names(edge_df)[names(edge_df) %in% c("x", "y")] <- c("x_to", "y_to")
+
+edge_df$x_label <- (edge_df$x_from + edge_df$x_to) / 2
+edge_df$y_label <- (edge_df$y_from + edge_df$y_to) / 2
+
+r2_df <- data.frame(
+  block = names(r2_values),
+  r2_label = sprintf("R2 = %.3f", as.numeric(r2_values)),
+  stringsAsFactors = FALSE
+)
+r2_df <- merge(r2_df, node_df[, c("block", "x", "y")], by = "block")
+
+model_plot <- ggplot() +
+  geom_segment(
+    data = edge_df,
+    aes(x = x_from + 0.52, y = y_from, xend = x_to - 0.52, yend = y_to),
+    arrow = arrow(length = unit(0.20, "cm")),
+    linewidth = 0.65,
+    color = "#374151",
+    alpha = 0.85
+  ) +
+  geom_label(
+    data = node_df,
+    aes(x = x, y = y, label = label),
+    size = 3.7,
+    fontface = "bold",
+    label.size = 0.35,
+    fill = "#ffffff",
+    color = "#111827"
+  ) +
+  geom_label(
+    data = edge_df,
+    aes(x = x_label, y = y_label + 0.12, label = label),
+    size = 2.5,
+    label.size = 0,
+    fill = "#ffffff",
+    color = "#111827"
+  ) +
+  geom_label(
+    data = r2_df,
+    aes(x = x, y = y - 0.48, label = r2_label),
+    size = 2.9,
+    label.size = 0.25,
+    fill = "#eef7f2",
+    color = "#111827"
+  ) +
+  coord_cartesian(xlim = c(-0.9, 8.9), ylim = c(0.0, 3.0), clip = "off") +
+  theme_void() +
+  labs(title = "SCRM受注データのlvsemモデル")
+
+model_plot
+
+ggsave(file.path(data_dir, "data003_lvsem_scrm_model.png"),
+       model_plot, width = 12, height = 8, dpi = 180)
+```
+
+## 最終出力
+
+```{r final_output}
+cat("サンプルサイズ:", nrow(model_data), "\n")
+cat("除外した定数に近い変数:",
+    paste(names(too_constant)[too_constant], collapse = ", "), "\n")
+print(round(r2_values, 3))
+```
+
+## 参考情報
+
+- De Leon Montes, L. (2026). ローカル `README. txt.txt` 内のデータ説明。
+- 使用パッケージ: `lvsem`
+- 使用データ: `SCRM_Orders_Dataset_450.csv`
