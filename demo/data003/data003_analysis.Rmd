@@ -376,6 +376,8 @@ print(round(r2_values, 3))
 
 ## 参考情報
 
-- De Leon Montes, L. (2026). ローカル `README. txt.txt` 内のデータ説明。
+- Hernandez Palma, H. G. (2026). *Supply Chain Risk Management and Order-Based
+  Costing: A Synthetic Industrial Dataset for Structural Equation Modeling
+  (PLS-SEM).* Mendeley Data, V1. https://doi.org/10.17632/bh5y663jnd.1
 - 使用パッケージ: `lvsem`
 - 使用データ: `SCRM_Orders_Dataset_450.csv`
