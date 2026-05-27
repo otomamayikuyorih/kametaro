@@ -2,24 +2,35 @@
 <html lang="ja">
 <head>
 <meta charset="UTF-8">
-<title>データサイエンス研究・教育(山本博之)</title>
+<title>ウェルビーイングのためのデータサイエンス研究・教育</title>
 <style>
-  body {
-    background: #000;
-    color: #fff;
-    font-family: system-ui, sans-serif;
-    margin: 40px;
-    line-height: 1.7;
-  }
-  h1, h2 { margin-top: 40px; }
-  a { color: white; }
-  h3 {
+body {
+	background: #000000;
+	color: #ffffff;
+	font-family: system-ui, sans-serif;
+	margin: 40px;
+	line-height: 1.7;
+}
+
+a:link,
+a:visited {
+	color: #ffffff;
+	text-decoration: underline;
+}
+
+a:hover,
+a:focus {
+	color: #c2fe20;
+	background-color: #000000;
+}
+
+h3 {
 	padding-bottom: 3px;
 	border-style: solid;
 	border-color: gray;
 	border-width: 0px 0px 1px 0px;
 	font-weight: bold;
-	width:600px;
+	width: 600px;
 	font-size: 12pt;
 }
 </style>
@@ -27,47 +38,68 @@
 <body>
 
 <BR><BR>
-山本博之 / 連絡先 h.yama2396@gmail.com / <a href="https://hiroyukiyamamoto.github.io/sikajiro/">メタボロミクスのためのインフォマティクス研究</a> / 
+山本博之 / 連絡先 h.yama2396@gmail.com / <a href="../index.html">ウェルビーイング</a> / <a href="https://hiroyukiyamamoto.github.io/sikajiro/">メタボロミクスのためのインフォマティクス研究</a> /
 <P><P>
 
+ウェルビーイング、社会科学、ビジネスデータを扱うための研究・教育メモです。<BR>
+Rパッケージ、デモデータ、講義資料、ダッシュボード開発を小さくまとめています。
+
 <h3>因果推論(PLS-SEM)</h3>
+
+<ul>
+<li>Rパッケージ
 	<ul>
-		<li>Rパッケージ
-		<ul>
-			<li>PLS-SEMのためのRパッケージ <a href="https://github.com/otomamayikuyorih/lvsem">lvsem</a>
-		</ul>
-		<li>デモデータ解析
-		<ul>
-			<li><a href="https://otomamayikuyorih.github.io/kametaro/demo/data000/data000_analysis.html">高松市のウェルビーイング指標アンケートデータ</a>
-			<li><a href="https://otomamayikuyorih.github.io/kametaro/demo/data001/data001_analysis.html">ラグジュアリー消費に関するマーケティングデータ</a>
-			<li><a href="https://otomamayikuyorih.github.io/kametaro/demo/data002/data002_analysis.html">乳製品ブランドにおける顧客満足・ブランド態度・購買意向データ</a>
-			<li><a href="https://otomamayikuyorih.github.io/kametaro/demo/data003/data003_analysis.html">医療機器受注におけるサプライチェーンリスク管理データ</a>
-		</ul>
-		<li>参考資料
-		<ul>
-			<li><a href="https://jxiv.jst.go.jp/index.php/jxiv/preprint/view/2443">Yamamoto H. "Iteration-Free PLS-SEM via Multiset PLS", Jxiv (2026). </a>
-		</ul>
+	<li>PLS-SEMのためのRパッケージ <a href="https://github.com/otomamayikuyorih/lvsem">lvsem</a></li>
+	<li>アンケートやマーケティング調査の潜在変数モデルを扱います。</li>
 	</ul>
+</li>
+<li>デモデータ解析
+	<ul>
+	<li><a href="demo/data000/data000_analysis.html">高松市のウェルビーイング指標アンケートデータ</a></li>
+	<li><a href="demo/data001/data001_analysis.html">ラグジュアリー消費に関するマーケティングデータ</a></li>
+	<li><a href="demo/data002/data002_analysis.html">乳製品ブランドにおける顧客満足・ブランド態度・購買意向データ</a></li>
+	<li><a href="demo/data003/data003_analysis.html">医療機器受注におけるサプライチェーンリスク管理データ</a></li>
+	</ul>
+</li>
+<li>参考資料
+	<ul>
+	<li><a href="https://jxiv.jst.go.jp/index.php/jxiv/preprint/view/2443">Yamamoto H. "Iteration-Free PLS-SEM via Multiset PLS", Jxiv (2026).</a></li>
+	</ul>
+</li>
+</ul>
 
 <H3>データサイエンス教育</H3>
+
+<ul>
+<li>教育用資料
 	<ul>
-		<li>教育用資料
-		<ul><li><a href="https://otomamayikuyorih.github.io/kametaro/seminar/001/seminar001.html">多変量解析入門</a>：過去に実施した有償セミナーを講義形式に編集しました (<a href="old_seminar.html">過去の開催</a>)</ul>
-		<li>資格
-			<ul>
-				<li>統計検定2級、3級(2011年)、国際資格(RSS) MODULE2 PROBABILITY MODELS(2013年)
-			</ul>
-		</ul>
+	<li><a href="seminar/001/seminar001.html">多変量解析入門</a>：過去に実施した有償セミナーを講義形式に編集しました。</li>
+	<li>実データの読み方、可視化、分析結果の説明を扱います。</li>
+	<li><a href="old_seminar.html">過去の開催</a></li>
 	</ul>
+</li>
+<li>資格
+	<ul>
+	<li>統計検定2級、3級(2011年)、国際資格(RSS) MODULE2 PROBABILITY MODELS(2013年)</li>
+	</ul>
+</li>
+</ul>
 
 <H3>BI・AIダッシュボード開発</H3>
+
+<ul>
+<li>ダッシュボード
 	<ul>
-		<li>ダッシュボード
-		<ul><li><a href="https://github.com/otomamayikuyorih/bidash">bidashパッケージ</a> : 損益計算書、貸借対照表の可視化</ul>
-		<li>AIダッシュボード
-		<ul><li><a href="https://github.com/otomamayikuyorih/aidash">aidashパッケージ</a> ： bidashパッケージの生成AIによる拡張</ul>
+	<li><a href="https://github.com/otomamayikuyorih/bidash">bidashパッケージ</a>：損益計算書、貸借対照表の可視化</li>
+	<li>財務データや業務データをブラウザ上で確認しやすくします。</li>
 	</ul>
+</li>
+<li>AIダッシュボード
+	<ul>
+	<li><a href="https://github.com/otomamayikuyorih/aidash">aidashパッケージ</a>：bidashパッケージの生成AIによる拡張</li>
+	</ul>
+</li>
+</ul>
 	
 </body>
 </html>
-
