@@ -1,5 +1,5 @@
 ---
-title: "Data004: AI Adoption and Digital Capability lvsem Demo"
+title: "Data004: AI導入・デジタル能力・戦略的意思決定品質データのlvsem分析"
 author: "Analysis"
 date: "`r Sys.Date()`"
 output:
@@ -13,19 +13,17 @@ output:
 knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE)
 ```
 
-## Overview
+## 概要
 
-This notebook analyzes the public Mendeley Data dataset by Navara and Prabowo
-(2026), **AI Adoption, Digital Capability, and Innovation Capability: The
-Mediating Role of Strategic Decision-Making Quality**.
+このノートブックでは、Navara and Prabowo (2026) による Mendeley Data の公開データ
+**AI Adoption, Digital Capability, and Innovation Capability: The Mediating
+Role of Strategic Decision-Making Quality** を分析します。
 
-The model follows the dataset description. AI adoption and digital capability
-are treated as antecedents of strategic decision-making quality and innovation
-capability, while strategic decision-making quality is treated as a mediator.
-The analysis uses the local `lvsem` package in the same style as the other
-demo folders.
+モデルでは、AI導入とデジタル能力が戦略的意思決定品質とイノベーション能力に影響し、
+さらに戦略的意思決定品質がイノベーション能力を媒介的に高める、という関係を仮定します。
+分析には、他のデモと同じくローカルの `lvsem` パッケージを使用します。
 
-## Packages
+## パッケージ
 
 ```{r packages}
 rm(list = ls(all = TRUE))
@@ -36,7 +34,7 @@ library(ggplot2)
 library(knitr)
 ```
 
-## Data
+## データ読み込み
 
 ```{r load_data}
 data_file <- "Excel data respondent.xlsx"
@@ -59,7 +57,7 @@ dim(raw_data)
 head(raw_data)
 ```
 
-## Model Definition
+## モデル定義
 
 ```{r model_definition}
 item_map <- c(
@@ -121,7 +119,7 @@ block_summary <- data.frame(
   block = names(blocks),
   item_count = vapply(blocks, length, integer(1))
 )
-kable(block_summary, caption = "Measurement blocks")
+kable(block_summary, caption = "測定ブロック")
 
 latent_vars <- names(blocks)
 path <- matrix(
@@ -144,12 +142,11 @@ score_relation <- path + t(path)
 score_relation
 ```
 
-The final seven manifest variables are labeled as `Innovation_Capability` to
-match the dataset title and description. Their literal wording is strongly
-decision-quality oriented, so the construct interpretation should be checked
-against the authors' intended instrument.
+末尾の7つの観測変数は、データセットのタイトルと説明に合わせて
+`Innovation_Capability` として扱っています。ただし、質問文そのものは意思決定品質に近い
+内容を含むため、構成概念の解釈には注意が必要です。
 
-## Export Clean Data
+## 分析用データの出力
 
 ```{r export_clean_data}
 item_dictionary <- data.frame(
@@ -168,7 +165,7 @@ data.frame(
 )
 ```
 
-## Latent Variable Scores
+## 潜在変数スコア
 
 ```{r scores}
 lv_scores <- make_lv_scores(model_data, blocks, score_relation)
@@ -179,7 +176,7 @@ round(cor(lv_scores), 3)
 write.csv(lv_scores, file.path(data_dir, "data004_latent_scores.csv"), row.names = FALSE)
 ```
 
-## Structural Model
+## 構造モデル
 
 ```{r structural_model}
 path_coefficients <- estimate_paths(lv_scores, path, scale_scores = FALSE)
@@ -209,13 +206,13 @@ kable(
     construct = r2_table$construct,
     R2 = round(r2_table$R2, 3)
   ),
-  caption = "R2 values"
+  caption = "内生潜在変数のR2"
 )
 
 write.csv(r2_table, file.path(data_dir, "data004_r2.csv"), row.names = FALSE)
 ```
 
-## Bootstrap
+## ブートストラップ
 
 ```{r bootstrap}
 set.seed(123)
@@ -233,7 +230,7 @@ kable(
     path = boot_paths$path,
     round(boot_paths[, c("beta", "boot_se", "t_value")], 3)
   ),
-  caption = "Bootstrap path estimates"
+  caption = "ブートストラップによるパス推定"
 )
 
 write.csv(
@@ -243,7 +240,7 @@ write.csv(
 )
 ```
 
-## Measurement Model
+## 測定モデル
 
 ```{r measurement}
 measures <- measurement_summary(model_data, blocks, lv_scores)
@@ -253,7 +250,7 @@ kable(
     block = measures$reliability$block,
     round(measures$reliability[, c("alpha", "composite_reliability", "ave")], 3)
   ),
-  caption = "Reliability and AVE"
+  caption = "信頼性とAVE"
 )
 
 kable(
@@ -262,7 +259,7 @@ kable(
     item = measures$loadings$item,
     loading = round(measures$loadings$loading, 3)
   ),
-  caption = "Outer loadings"
+  caption = "外部負荷量"
 )
 
 write.csv(
@@ -277,7 +274,7 @@ write.csv(
 )
 ```
 
-## Model Plot
+## モデル図
 
 ```{r model_plot, fig.width=12, fig.height=7}
 node_df <- data.frame(
@@ -288,10 +285,10 @@ node_df <- data.frame(
     "Innovation_Capability"
   ),
   label = c(
-    "AI Adoption\n(AI_Adoption)",
-    "Digital Capability\n(Digital_Capability)",
-    "Strategic Decision\nQuality\n(Strategic_Decision_Quality)",
-    "Innovation\nCapability\n(Innovation_Capability)"
+    "AI導入\n(AI_Adoption)",
+    "デジタル能力\n(Digital_Capability)",
+    "戦略的意思決定\n品質\n(Strategic_Decision_Quality)",
+    "イノベーション\n能力\n(Innovation_Capability)"
   ),
   x = c(0, 0, 3.0, 6.2),
   y = c(2.2, 0.4, 1.3, 1.3),
@@ -399,7 +396,7 @@ model_plot <- ggplot() +
     panel.background = element_rect(fill = "#ffffff", color = NA),
     plot.title = element_text(color = "#111827", face = "bold", hjust = 0.5)
   ) +
-  labs(title = "AI Adoption and Digital Capability lvsem Model")
+  labs(title = "AI導入・デジタル能力・戦略的意思決定品質のlvsemモデル")
 
 model_plot
 
@@ -412,17 +409,17 @@ ggsave(
 )
 ```
 
-## Final Output
+## 最終出力
 
 ```{r final_output}
-cat("Sample size:", nrow(model_data), "\n")
+cat("サンプルサイズ:", nrow(model_data), "\n")
 print(round(r2_values, 3))
 ```
 
-## Reference
+## 参考文献・データ
 
 - Navara, D., & Prabowo, P. (2026). *AI Adoption, Digital Capability, and
   Innovation Capability: The Mediating Role of Strategic Decision-Making
   Quality*. Mendeley Data, V2. https://doi.org/10.17632/fs78cfs84v.2
-- Local package: `lvsem`
-- Source file: `Excel data respondent.xlsx`
+- 使用パッケージ: `lvsem`
+- 使用データ: `Excel data respondent.xlsx`

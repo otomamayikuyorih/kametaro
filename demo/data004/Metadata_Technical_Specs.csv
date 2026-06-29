@@ -1,5 +1,6 @@
 field,value
 dataset_title,"AI Adoption, Digital Capability, and Innovation Capability: The Mediating Role of Strategic Decision-Making Quality"
+demo_title,"AI導入・デジタル能力・戦略的意思決定品質データのlvsem分析"
 authors,"Diandra Navara; Puji Prabowo"
 repository,Mendeley Data
 doi,10.17632/fs78cfs84v.2
@@ -13,4 +14,4 @@ bootstrap_resamples,1000
 analysis_script,data004_analysis.Rmd
 analysis_report,data004_analysis.html
 model_figure,data004_lvsem_ai_adoption_model.png
-notes,"Final seven manifest variables are treated as Innovation_Capability to match the dataset description, although their literal wording is decision-quality oriented."
+notes,"末尾の7つの観測変数はデータセット説明に合わせてInnovation_Capabilityとして扱っているが、質問文は戦略的意思決定品質に近いため解釈に注意が必要。"
