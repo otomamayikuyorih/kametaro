@@ -1,0 +1,16 @@
+field,value
+dataset_title,"AI Adoption, Digital Capability, and Innovation Capability: The Mediating Role of Strategic Decision-Making Quality"
+authors,"Diandra Navara; Puji Prabowo"
+repository,Mendeley Data
+doi,10.17632/fs78cfs84v.2
+source_url,https://data.mendeley.com/datasets/fs78cfs84v/2
+license,CC BY 4.0
+downloaded_file,"Excel data respondent.xlsx"
+respondents,342
+manifest_variables_used,25
+constructs,4
+bootstrap_resamples,1000
+analysis_script,data004_analysis.Rmd
+analysis_report,data004_analysis.html
+model_figure,data004_lvsem_ai_adoption_model.png
+notes,"Final seven manifest variables are treated as Innovation_Capability to match the dataset description, although their literal wording is decision-quality oriented."

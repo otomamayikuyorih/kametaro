@@ -1,0 +1,428 @@
+---
+title: "Data004: AI Adoption and Digital Capability lvsem Demo"
+author: "Analysis"
+date: "`r Sys.Date()`"
+output:
+  html_document:
+    toc: true
+    toc_float: true
+    code_folding: show
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE)
+```
+
+## Overview
+
+This notebook analyzes the public Mendeley Data dataset by Navara and Prabowo
+(2026), **AI Adoption, Digital Capability, and Innovation Capability: The
+Mediating Role of Strategic Decision-Making Quality**.
+
+The model follows the dataset description. AI adoption and digital capability
+are treated as antecedents of strategic decision-making quality and innovation
+capability, while strategic decision-making quality is treated as a mediator.
+The analysis uses the local `lvsem` package in the same style as the other
+demo folders.
+
+## Packages
+
+```{r packages}
+rm(list = ls(all = TRUE))
+
+library(lvsem)
+library(readxl)
+library(ggplot2)
+library(knitr)
+```
+
+## Data
+
+```{r load_data}
+data_file <- "Excel data respondent.xlsx"
+data_candidates <- c(
+  file.path("data004", data_file),
+  data_file,
+  file.path("..", "data004", data_file)
+)
+data_path <- data_candidates[file.exists(data_candidates)][1]
+
+if (is.na(data_path)) {
+  stop("Excel file not found: ", data_file)
+}
+
+data_dir <- dirname(data_path)
+raw_data <- readxl::read_excel(data_path)
+names(raw_data) <- trimws(gsub("[\r\n]+", "\n", names(raw_data)))
+
+dim(raw_data)
+head(raw_data)
+```
+
+## Model Definition
+
+```{r model_definition}
+item_map <- c(
+  AIA1 = "I intend to adopt an AI-based system in my business/work because it can improve my business performance and results.",
+  AIA2 = "I use AI-based technology to help analyze data or information in my work or business.",
+  AIA3 = "The application of AI technology helps improve the efficiency of my work processes or business operations.",
+  AIA4 = "I believe that AI systems can provide reliable results or recommendations in my work.",
+  AIA5 = "The use of AI technology aligns with the needs and working methods of my business or work.",
+  DC1 = "I have good skills in using various digital technologies to support my work/business.",
+  DC2 = "I am able to utilize digital technologies (such as software, online platforms, or data systems) to support my work or business activities.\n",
+  DC3 = "I have the ability to manage and utilize digital information or data to support work decision-making.",
+  DC4 = "I am able to use various digital technologies to improve the efficiency of work processes or business operations.\n",
+  DC5 = "I can integrate digital technology with my work processes or business strategies.\n",
+  DC6 = "I am able to utilize digital technology to create or develop new ideas, products, or services in my work or business.\n",
+  DC7 = "I have the ability to combine digital technology with organizational resources to improve work or business performance.\n",
+  DC8 = "I have skills in using digital technology to communicate and collaborate with colleagues or business partners.\n",
+  SDQ1 = "I always set clear goals before making strategic decisions in my work or business.",
+  SDQ2 = "Before making a strategic decision, I gather information from various relevant sources (both internal and external).\n",
+  SDQ3 = "I systematically evaluate several alternative solutions before making a final decision.\n",
+  SDQ4 = "In making strategic decisions, I consider the potential risks and the chances of success of each alternative.\n",
+  SDQ5 = "My strategic decisions are based on logical and structured analysis, not just intuition.\n",
+  IC1 = "Before making strategic decisions, I set measurable and specific decision objectives as a basis for evaluation.\n",
+  IC2 = "I evaluate strategic decision alternatives by quantitatively considering the probability of risks and their business consequences.",
+  IC3 = "The strategic decisions I make are based on relevant data and analysis, not just personal intuition.\n",
+  IC4 = "I make optimal use of the knowledge and information available within the organization before making strategic decisions.\n",
+  IC5 = "In the strategic decision-making process, I encourage team participation to improve the quality of alternative evaluations.",
+  IC6 = "I re-evaluate previous strategic decisions to improve the quality of subsequent decisions.\n",
+  IC7 = "Every strategic decision I make is aligned with the company's long-term strategy and business objectives.\n"
+)
+
+item_map <- trimws(gsub("[\r\n]+", "\n", item_map))
+
+missing_items <- setdiff(unname(item_map), names(raw_data))
+if (length(missing_items) > 0) {
+  stop("Missing expected columns: ", paste(missing_items, collapse = " | "))
+}
+
+model_data <- as.data.frame(raw_data[, unname(item_map)])
+names(model_data) <- names(item_map)
+
+model_data[] <- lapply(model_data, function(x) {
+  x <- as.numeric(as.character(x))
+  x[!is.finite(x)] <- NA_real_
+  x
+})
+
+model_data[] <- lapply(model_data, function(x) {
+  ifelse(is.na(x), stats::median(x, na.rm = TRUE), x)
+})
+
+blocks <- list(
+  AI_Adoption = paste0("AIA", 1:5),
+  Digital_Capability = paste0("DC", 1:8),
+  Strategic_Decision_Quality = paste0("SDQ", 1:5),
+  Innovation_Capability = paste0("IC", 1:7)
+)
+
+block_summary <- data.frame(
+  block = names(blocks),
+  item_count = vapply(blocks, length, integer(1))
+)
+kable(block_summary, caption = "Measurement blocks")
+
+latent_vars <- names(blocks)
+path <- matrix(
+  0,
+  nrow = length(latent_vars),
+  ncol = length(latent_vars),
+  dimnames = list(latent_vars, latent_vars)
+)
+
+path["Strategic_Decision_Quality", c("AI_Adoption", "Digital_Capability")] <- 1
+path["Innovation_Capability", c(
+  "AI_Adoption",
+  "Digital_Capability",
+  "Strategic_Decision_Quality"
+)] <- 1
+
+path
+
+score_relation <- path + t(path)
+score_relation
+```
+
+The final seven manifest variables are labeled as `Innovation_Capability` to
+match the dataset title and description. Their literal wording is strongly
+decision-quality oriented, so the construct interpretation should be checked
+against the authors' intended instrument.
+
+## Export Clean Data
+
+```{r export_clean_data}
+item_dictionary <- data.frame(
+  construct = rep(names(blocks), vapply(blocks, length, integer(1))),
+  item = unlist(blocks, use.names = FALSE),
+  source_column = unname(item_map[unlist(blocks, use.names = FALSE)]),
+  row.names = NULL
+)
+
+write.csv(model_data, file.path(data_dir, "data004_ai_adoption_clean.csv"), row.names = FALSE)
+write.csv(item_dictionary, file.path(data_dir, "Data_Dictionary.csv"), row.names = FALSE)
+
+data.frame(
+  samples = nrow(model_data),
+  variables = ncol(model_data)
+)
+```
+
+## Latent Variable Scores
+
+```{r scores}
+lv_scores <- make_lv_scores(model_data, blocks, score_relation)
+
+head(lv_scores)
+round(cor(lv_scores), 3)
+
+write.csv(lv_scores, file.path(data_dir, "data004_latent_scores.csv"), row.names = FALSE)
+```
+
+## Structural Model
+
+```{r structural_model}
+path_coefficients <- estimate_paths(lv_scores, path, scale_scores = FALSE)
+path_effects <- effects_from_beta(path_coefficients)
+
+path_coefficients
+path_effects
+
+endogenous_vars <- rownames(path)[rowSums(path) > 0]
+r2_values <- sapply(endogenous_vars, function(dv) {
+  preds <- names(which(path[dv, ] == 1))
+  fit <- lm(
+    as.formula(paste(dv, "~", paste(preds, collapse = " + "))),
+    data = as.data.frame(lv_scores)
+  )
+  summary(fit)$r.squared
+})
+
+r2_table <- data.frame(
+  construct = names(r2_values),
+  R2 = as.numeric(r2_values),
+  row.names = NULL
+)
+
+kable(
+  data.frame(
+    construct = r2_table$construct,
+    R2 = round(r2_table$R2, 3)
+  ),
+  caption = "R2 values"
+)
+
+write.csv(r2_table, file.path(data_dir, "data004_r2.csv"), row.names = FALSE)
+```
+
+## Bootstrap
+
+```{r bootstrap}
+set.seed(123)
+boot_paths <- bootstrap_paths(
+  model_data,
+  blocks,
+  path,
+  br = 1000,
+  seed = 123,
+  score_matrix = score_relation
+)
+
+kable(
+  data.frame(
+    path = boot_paths$path,
+    round(boot_paths[, c("beta", "boot_se", "t_value")], 3)
+  ),
+  caption = "Bootstrap path estimates"
+)
+
+write.csv(
+  boot_paths,
+  file.path(data_dir, "data004_path_coefficients_bootstrap.csv"),
+  row.names = FALSE
+)
+```
+
+## Measurement Model
+
+```{r measurement}
+measures <- measurement_summary(model_data, blocks, lv_scores)
+
+kable(
+  data.frame(
+    block = measures$reliability$block,
+    round(measures$reliability[, c("alpha", "composite_reliability", "ave")], 3)
+  ),
+  caption = "Reliability and AVE"
+)
+
+kable(
+  data.frame(
+    block = measures$loadings$block,
+    item = measures$loadings$item,
+    loading = round(measures$loadings$loading, 3)
+  ),
+  caption = "Outer loadings"
+)
+
+write.csv(
+  measures$reliability,
+  file.path(data_dir, "data004_reliability_ave.csv"),
+  row.names = FALSE
+)
+write.csv(
+  measures$loadings,
+  file.path(data_dir, "data004_outer_loadings.csv"),
+  row.names = FALSE
+)
+```
+
+## Model Plot
+
+```{r model_plot, fig.width=12, fig.height=7}
+node_df <- data.frame(
+  block = c(
+    "AI_Adoption",
+    "Digital_Capability",
+    "Strategic_Decision_Quality",
+    "Innovation_Capability"
+  ),
+  label = c(
+    "AI Adoption\n(AI_Adoption)",
+    "Digital Capability\n(Digital_Capability)",
+    "Strategic Decision\nQuality\n(Strategic_Decision_Quality)",
+    "Innovation\nCapability\n(Innovation_Capability)"
+  ),
+  x = c(0, 0, 3.0, 6.2),
+  y = c(2.2, 0.4, 1.3, 1.3),
+  stringsAsFactors = FALSE
+)
+
+edge_df <- boot_paths
+edge_split <- strsplit(edge_df$path, "_to_")
+edge_df$from <- vapply(edge_split, `[`, character(1), 1)
+edge_df$to <- vapply(edge_split, `[`, character(1), 2)
+edge_df$label <- sprintf("beta = %.3f\nT = %.3f", edge_df$beta, edge_df$t_value)
+
+edge_df <- merge(
+  edge_df,
+  node_df[, c("block", "x", "y")],
+  by.x = "from",
+  by.y = "block"
+)
+names(edge_df)[names(edge_df) %in% c("x", "y")] <- c("x_from", "y_from")
+
+edge_df <- merge(
+  edge_df,
+  node_df[, c("block", "x", "y")],
+  by.x = "to",
+  by.y = "block"
+)
+names(edge_df)[names(edge_df) %in% c("x", "y")] <- c("x_to", "y_to")
+
+edge_df$x_label <- c(1.35, 1.35, 3.25, 3.25, 4.70)[match(
+  edge_df$path,
+  c(
+    "AI_Adoption_to_Strategic_Decision_Quality",
+    "Digital_Capability_to_Strategic_Decision_Quality",
+    "AI_Adoption_to_Innovation_Capability",
+    "Digital_Capability_to_Innovation_Capability",
+    "Strategic_Decision_Quality_to_Innovation_Capability"
+  )
+)]
+edge_df$y_label <- c(1.85, 0.72, 2.62, 0.18, 1.72)[match(
+  edge_df$path,
+  c(
+    "AI_Adoption_to_Strategic_Decision_Quality",
+    "Digital_Capability_to_Strategic_Decision_Quality",
+    "AI_Adoption_to_Innovation_Capability",
+    "Digital_Capability_to_Innovation_Capability",
+    "Strategic_Decision_Quality_to_Innovation_Capability"
+  )
+)]
+
+r2_df <- data.frame(
+  block = r2_table$construct,
+  r2_label = sprintf("R2 = %.3f", r2_table$R2),
+  stringsAsFactors = FALSE
+)
+r2_df <- merge(r2_df, node_df[, c("block", "x", "y")], by = "block")
+r2_df$y_label <- ifelse(
+  r2_df$block == "Strategic_Decision_Quality",
+  r2_df$y + 0.62,
+  r2_df$y - 0.55
+)
+
+model_plot <- ggplot() +
+  geom_segment(
+    data = edge_df,
+    aes(
+      x = x_from + 0.58,
+      y = y_from,
+      xend = x_to - 0.58,
+      yend = y_to
+    ),
+    arrow = arrow(length = unit(0.20, "cm")),
+    linewidth = 0.75,
+    color = "#374151",
+    alpha = 0.90
+  ) +
+  geom_label(
+    data = node_df,
+    aes(x = x, y = y, label = label),
+    size = 3.8,
+    fontface = "bold",
+    label.size = 0.35,
+    fill = "#ffffff",
+    color = "#111827"
+  ) +
+  geom_label(
+    data = edge_df,
+    aes(x = x_label, y = y_label, label = label),
+    size = 2.9,
+    label.size = 0.20,
+    fill = "#ffffff",
+    color = "#111827"
+  ) +
+  geom_label(
+    data = r2_df,
+    aes(x = x, y = y_label, label = r2_label),
+    size = 3.0,
+    label.size = 0.25,
+    fill = "#eef7f2",
+    color = "#111827"
+  ) +
+  coord_cartesian(xlim = c(-0.9, 7.1), ylim = c(-0.5, 3.0), clip = "off") +
+  theme_void() +
+  theme(
+    plot.background = element_rect(fill = "#ffffff", color = NA),
+    panel.background = element_rect(fill = "#ffffff", color = NA),
+    plot.title = element_text(color = "#111827", face = "bold", hjust = 0.5)
+  ) +
+  labs(title = "AI Adoption and Digital Capability lvsem Model")
+
+model_plot
+
+ggsave(
+  file.path(data_dir, "data004_lvsem_ai_adoption_model.png"),
+  model_plot,
+  width = 12,
+  height = 7,
+  dpi = 180
+)
+```
+
+## Final Output
+
+```{r final_output}
+cat("Sample size:", nrow(model_data), "\n")
+print(round(r2_values, 3))
+```
+
+## Reference
+
+- Navara, D., & Prabowo, P. (2026). *AI Adoption, Digital Capability, and
+  Innovation Capability: The Mediating Role of Strategic Decision-Making
+  Quality*. Mendeley Data, V2. https://doi.org/10.17632/fs78cfs84v.2
+- Local package: `lvsem`
+- Source file: `Excel data respondent.xlsx`
