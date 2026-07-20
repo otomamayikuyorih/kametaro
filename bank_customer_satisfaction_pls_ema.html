@@ -1,0 +1,606 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>銀行顧客満足度データのPLS-EMA解析</title>
+  <style>
+    html {
+      color: #1a1a1a;
+      background-color: #fdfdfd;
+    }
+    body {
+      margin: 0 auto;
+      max-width: 36em;
+      padding-left: 50px;
+      padding-right: 50px;
+      padding-top: 50px;
+      padding-bottom: 50px;
+      hyphens: auto;
+      overflow-wrap: break-word;
+      text-rendering: optimizeLegibility;
+      font-kerning: normal;
+    }
+    @media (max-width: 600px) {
+      body {
+        font-size: 0.9em;
+        padding: 12px;
+      }
+      h1 {
+        font-size: 1.8em;
+      }
+    }
+    @media print {
+      html {
+        background-color: white;
+      }
+      body {
+        background-color: transparent;
+        color: black;
+        font-size: 12pt;
+      }
+      p, h2, h3 {
+        orphans: 3;
+        widows: 3;
+      }
+      h2, h3, h4 {
+        page-break-after: avoid;
+      }
+    }
+    p {
+      margin: 1em 0;
+    }
+    a {
+      color: #1a1a1a;
+    }
+    a:visited {
+      color: #1a1a1a;
+    }
+    img {
+      max-width: 100%;
+    }
+    svg {
+      height: auto;
+      max-width: 100%;
+    }
+    h1, h2, h3, h4, h5, h6 {
+      margin-top: 1.4em;
+    }
+    h5, h6 {
+      font-size: 1em;
+      font-style: italic;
+    }
+    h6 {
+      font-weight: normal;
+    }
+    ol, ul {
+      padding-left: 1.7em;
+      margin-top: 1em;
+    }
+    li > ol, li > ul {
+      margin-top: 0;
+    }
+    blockquote {
+      margin: 1em 0 1em 1.7em;
+      padding-left: 1em;
+      border-left: 2px solid #e6e6e6;
+      color: #606060;
+    }
+    code {
+      font-family: Menlo, Monaco, Consolas, 'Lucida Console', monospace;
+      font-size: 85%;
+      margin: 0;
+      hyphens: manual;
+    }
+    pre {
+      margin: 1em 0;
+      overflow: auto;
+    }
+    pre code {
+      padding: 0;
+      overflow: visible;
+      overflow-wrap: normal;
+    }
+    .sourceCode {
+     background-color: transparent;
+     overflow: visible;
+    }
+    hr {
+      background-color: #1a1a1a;
+      border: none;
+      height: 1px;
+      margin: 1em 0;
+    }
+    table {
+      margin: 1em 0;
+      border-collapse: collapse;
+      width: 100%;
+      overflow-x: auto;
+      display: block;
+      font-variant-numeric: lining-nums tabular-nums;
+    }
+    table caption {
+      margin-bottom: 0.75em;
+    }
+    tbody {
+      margin-top: 0.5em;
+      border-top: 1px solid #1a1a1a;
+      border-bottom: 1px solid #1a1a1a;
+    }
+    th {
+      border-top: 1px solid #1a1a1a;
+      padding: 0.25em 0.5em 0.25em 0.5em;
+    }
+    td {
+      padding: 0.125em 0.5em 0.25em 0.5em;
+    }
+    header {
+      margin-bottom: 4em;
+      text-align: center;
+    }
+    #TOC li {
+      list-style: none;
+    }
+    #TOC ul {
+      padding-left: 1.3em;
+    }
+    #TOC > ul {
+      padding-left: 0;
+    }
+    #TOC a:not(:hover) {
+      text-decoration: none;
+    }
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    /* The extra [class] is a hack that increases specificity enough to
+       override a similar rule in reveal.js */
+    ul.task-list[class]{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      font-size: inherit;
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1.6em;
+      vertical-align: middle;
+    }
+    /* CSS for syntax highlighting */
+    pre > code.sourceCode { white-space: pre; position: relative; }
+    pre > code.sourceCode > span { line-height: 1.25; }
+    pre > code.sourceCode > span:empty { height: 1.2em; }
+    .sourceCode { overflow: visible; }
+    code.sourceCode > span { color: inherit; text-decoration: inherit; }
+    div.sourceCode { margin: 1em 0; }
+    pre.sourceCode { margin: 0; }
+    @media screen {
+    div.sourceCode { overflow: auto; }
+    }
+    @media print {
+    pre > code.sourceCode { white-space: pre-wrap; }
+    pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+    }
+    pre.numberSource code
+      { counter-reset: source-line 0; }
+    pre.numberSource code > span
+      { position: relative; left: -4em; counter-increment: source-line; }
+    pre.numberSource code > span > a:first-child::before
+      { content: counter(source-line);
+        position: relative; left: -1em; text-align: right; vertical-align: baseline;
+        border: none; display: inline-block;
+        -webkit-touch-callout: none; -webkit-user-select: none;
+        -khtml-user-select: none; -moz-user-select: none;
+        -ms-user-select: none; user-select: none;
+        padding: 0 4px; width: 4em;
+        color: #aaaaaa;
+      }
+    pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+    div.sourceCode
+      {   }
+    @media screen {
+    pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+    }
+    code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+    code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+    code span.at { color: #7d9029; } /* Attribute */
+    code span.bn { color: #40a070; } /* BaseN */
+    code span.bu { color: #008000; } /* BuiltIn */
+    code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+    code span.ch { color: #4070a0; } /* Char */
+    code span.cn { color: #880000; } /* Constant */
+    code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+    code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+    code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+    code span.dt { color: #902000; } /* DataType */
+    code span.dv { color: #40a070; } /* DecVal */
+    code span.er { color: #ff0000; font-weight: bold; } /* Error */
+    code span.ex { } /* Extension */
+    code span.fl { color: #40a070; } /* Float */
+    code span.fu { color: #06287e; } /* Function */
+    code span.im { color: #008000; font-weight: bold; } /* Import */
+    code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+    code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+    code span.op { color: #666666; } /* Operator */
+    code span.ot { color: #007020; } /* Other */
+    code span.pp { color: #bc7a00; } /* Preprocessor */
+    code span.sc { color: #4070a0; } /* SpecialChar */
+    code span.ss { color: #bb6688; } /* SpecialString */
+    code span.st { color: #4070a0; } /* String */
+    code span.va { color: #19177c; } /* Variable */
+    code span.vs { color: #4070a0; } /* VerbatimString */
+    code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+  </style>
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<header id="title-block-header">
+<h1 class="title">銀行顧客満足度データのPLS-EMA解析</h1>
+</header>
+<h1
+id="銀行顧客満足度データ顧客期待品質価値認知顧客満足の探索的媒介分析">銀行顧客満足度データ：顧客期待、品質・価値認知、顧客満足の探索的媒介分析</h1>
+<h2 id="概要">概要</h2>
+<p>このデモでは、Rパッケージ <code>plspm</code>
+に収録されている銀行顧客満足度データに PLS-EMA（Partial Least Squares
+Exploratory Mediation Analysis）を適用します。</p>
+<p>顧客の期待と顧客満足の関係を、知覚品質と知覚価値に関する複数の質問項目が
+どのように媒介するかを探索します。</p>
+<p>PLS-EMAは、媒介変数を1つずつ分析する方法ではありません。複数の媒介候補を
+同時に扱い、説明変数と関連し、同時に結果変数とも関連する多変量成分を抽出
+します。</p>
+<h2 id="データ">データ</h2>
+<p><code>satisfaction</code>
+は、スペインの金融機関の顧客250名を対象とした顧客満足度
+調査データです。28変数のうち、最初の27変数が6つの構成概念に対応する
+質問項目です。</p>
+<table>
+<thead>
+<tr class="header">
+<th>構成概念</th>
+<th>略称</th>
+<th style="text-align: right;">項目数</th>
+<th>内容</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>イメージ</td>
+<td>IMAG</td>
+<td style="text-align: right;">5</td>
+<td>評判、信頼性、顧客への配慮など</td>
+</tr>
+<tr class="even">
+<td>顧客期待</td>
+<td>EXPE</td>
+<td style="text-align: right;">5</td>
+<td>商品、サービス、対応、総合的品質への期待</td>
+</tr>
+<tr class="odd">
+<td>知覚品質</td>
+<td>QUAL</td>
+<td style="text-align: right;">5</td>
+<td>商品・サービスの信頼性、品揃え、助言、総合品質</td>
+</tr>
+<tr class="even">
+<td>知覚価値</td>
+<td>VAL</td>
+<td style="text-align: right;">4</td>
+<td>便益、投資価値、品質と価格の関係</td>
+</tr>
+<tr class="odd">
+<td>顧客満足</td>
+<td>SAT</td>
+<td style="text-align: right;">4</td>
+<td>総合満足、期待の充足、理想との比較</td>
+</tr>
+<tr class="even">
+<td>ロイヤルティ</td>
+<td>LOY</td>
+<td style="text-align: right;">4</td>
+<td>再選択、推奨、ブランドへの忠誠</td>
+</tr>
+</tbody>
+</table>
+<p>このデモでは、次の3ブロックを使用します。</p>
+<table>
+<thead>
+<tr class="header">
+<th>PLS-EMAブロック</th>
+<th>使用する構成概念</th>
+<th style="text-align: right;">項目数</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>X</mi><annotation encoding="application/x-tex">X</annotation></semantics></math></td>
+<td>顧客期待（EXPE）</td>
+<td style="text-align: right;">5</td>
+</tr>
+<tr class="even">
+<td><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>M</mi><annotation encoding="application/x-tex">M</annotation></semantics></math></td>
+<td>知覚品質（QUAL）＋知覚価値（VAL）</td>
+<td style="text-align: right;">9</td>
+</tr>
+<tr class="odd">
+<td><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>Y</mi><annotation encoding="application/x-tex">Y</annotation></semantics></math></td>
+<td>顧客満足（SAT）</td>
+<td style="text-align: right;">4</td>
+</tr>
+</tbody>
+</table>
+<h2 id="pls-emaの目的関数">PLS-EMAの目的関数</h2>
+<p>各ブロックの潜在スコアを</p>
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>t</mi><mi>X</mi></msub><mo>=</mo><mi>X</mi><mi>w</mi><mo>,</mo><mspace width="2.0em"></mspace><msub><mi>t</mi><mi>M</mi></msub><mo>=</mo><mi>M</mi><mi>c</mi><mo>,</mo><mspace width="2.0em"></mspace><msub><mi>t</mi><mi>Y</mi></msub><mo>=</mo><mi>Y</mi><mi>u</mi></mrow><annotation encoding="application/x-tex">
+t_X=Xw,\qquad t_M=Mc,\qquad t_Y=Yu
+</annotation></semantics></math></p>
+<p>とします。</p>
+<p>PLS-EMAでは、次の目的関数を用いて3つのスコアを抽出します。</p>
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo>cov</mo><mrow><mo stretchy="true" form="prefix">(</mo><mi>X</mi><mi>w</mi><mo>,</mo><mi>M</mi><mi>c</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>+</mo><mo>cov</mo><mrow><mo stretchy="true" form="prefix">(</mo><mi>M</mi><mi>c</mi><mo>,</mo><mi>Y</mi><mi>u</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>−</mo><mo>cov</mo><mrow><mo stretchy="true" form="prefix">(</mo><mi>X</mi><mi>w</mi><mo>,</mo><mi>Y</mi><mi>u</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">
+\operatorname{cov}(Xw,Mc)
++
+\operatorname{cov}(Mc,Yu)
+-
+\operatorname{cov}(Xw,Yu)
+</annotation></semantics></math></p>
+<p>この目的関数は、次の性質を持つ媒介成分を優先します。</p>
+<ul>
+<li>顧客期待と強く関連する</li>
+<li>顧客満足と強く関連する</li>
+<li>顧客期待と顧客満足の直接的な共分散を抑える</li>
+</ul>
+<p>マルチセットPLSの計算には、<code>loadings::multipls_geigen()</code>
+を使用します。 <code>lvsem::pls_ema()</code>
+がデータの準備、成分抽出、経路推定、ブートストラップを
+まとめて実行します。</p>
+<h2 id="解析コード">解析コード</h2>
+<h3 id="パッケージとデータの読み込み">パッケージとデータの読み込み</h3>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(lvsem)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(<span class="st">&quot;satisfaction&quot;</span>, <span class="at">package =</span> <span class="st">&quot;plspm&quot;</span>)</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="fu">dim</span>(satisfaction)</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="co"># 250  28</span></span></code></pre></div>
+<h3 id="変数名の設定">変数名の設定</h3>
+<p>元データの列位置に基づいて、解析で使用する項目名を設定します。</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(satisfaction)[<span class="dv">6</span><span class="sc">:</span><span class="dv">10</span>] <span class="ot">&lt;-</span> <span class="fu">paste0</span>(<span class="st">&quot;EXPE&quot;</span>, <span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>)</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(satisfaction)[<span class="dv">11</span><span class="sc">:</span><span class="dv">15</span>] <span class="ot">&lt;-</span> <span class="fu">paste0</span>(<span class="st">&quot;QUAL&quot;</span>, <span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>)</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(satisfaction)[<span class="dv">16</span><span class="sc">:</span><span class="dv">19</span>] <span class="ot">&lt;-</span> <span class="fu">paste0</span>(<span class="st">&quot;VAL&quot;</span>, <span class="dv">1</span><span class="sc">:</span><span class="dv">4</span>)</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(satisfaction)[<span class="dv">20</span><span class="sc">:</span><span class="dv">23</span>] <span class="ot">&lt;-</span> <span class="fu">paste0</span>(<span class="st">&quot;SAT&quot;</span>, <span class="dv">1</span><span class="sc">:</span><span class="dv">4</span>)</span></code></pre></div>
+<h3 id="pls-emaの実行">PLS-EMAの実行</h3>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>fit <span class="ot">&lt;-</span> <span class="fu">pls_ema</span>(</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> satisfaction,</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">x =</span> <span class="fu">paste0</span>(<span class="st">&quot;EXPE&quot;</span>, <span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>),</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">mediators =</span> <span class="fu">c</span>(</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">paste0</span>(<span class="st">&quot;QUAL&quot;</span>, <span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>),</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>    <span class="fu">paste0</span>(<span class="st">&quot;VAL&quot;</span>, <span class="dv">1</span><span class="sc">:</span><span class="dv">4</span>)</span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>  ),</span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">y =</span> <span class="fu">paste0</span>(<span class="st">&quot;SAT&quot;</span>, <span class="dv">1</span><span class="sc">:</span><span class="dv">4</span>),</span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>  <span class="at">br =</span> <span class="dv">1000</span>,</span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>  <span class="at">seed =</span> <span class="dv">20260720</span></span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(fit)</span></code></pre></div>
+<p>ブートストラップでは、顧客を単位として1,000回の復元抽出を行います。
+各標本について、マルチセットPLS成分と経路係数を最初から再推定します。</p>
+<h2 id="結果">結果</h2>
+<h3 id="目的関数を構成する共分散">目的関数を構成する共分散</h3>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>fit<span class="sc">$</span>covariance</span></code></pre></div>
+<table>
+<thead>
+<tr class="header">
+<th>指標</th>
+<th style="text-align: right;">推定値</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo>cov</mo><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>t</mi><mi>X</mi></msub><mo>,</mo><msub><mi>t</mi><mi>M</mi></msub><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">\operatorname{cov}(t_X,t_M)</annotation></semantics></math></td>
+<td style="text-align: right;">1.2097</td>
+</tr>
+<tr class="even">
+<td><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo>cov</mo><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>t</mi><mi>M</mi></msub><mo>,</mo><msub><mi>t</mi><mi>Y</mi></msub><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">\operatorname{cov}(t_M,t_Y)</annotation></semantics></math></td>
+<td style="text-align: right;">1.0443</td>
+</tr>
+<tr class="odd">
+<td><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo>cov</mo><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>t</mi><mi>X</mi></msub><mo>,</mo><msub><mi>t</mi><mi>Y</mi></msub><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">\operatorname{cov}(t_X,t_Y)</annotation></semantics></math></td>
+<td style="text-align: right;">0.3771</td>
+</tr>
+<tr class="even">
+<td>目的関数値</td>
+<td style="text-align: right;">1.8769</td>
+</tr>
+</tbody>
+</table>
+<p>ここで示した共分散は、マルチセットPLSが出力する未標準化スコアに基づきます。
+したがって、値が1を超える場合があります。経路推定では、3つのスコアを
+それぞれ平均0、標準偏差1に標準化します。</p>
+<h3 id="経路効果">経路効果</h3>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>fit<span class="sc">$</span>effects</span></code></pre></div>
+<table>
+<thead>
+<tr class="header">
+<th>効果</th>
+<th style="text-align: right;">推定値</th>
+<th style="text-align: right;">Bootstrap SE</th>
+<th style="text-align: right;">95%区間</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>経路
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>a</mi><annotation encoding="application/x-tex">a</annotation></semantics></math>：期待→媒介成分</td>
+<td style="text-align: right;">0.8218</td>
+<td style="text-align: right;">0.0224</td>
+<td style="text-align: right;">[0.7756, 0.8609]</td>
+</tr>
+<tr class="even">
+<td>経路
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>b</mi><annotation encoding="application/x-tex">b</annotation></semantics></math>：媒介成分→満足</td>
+<td style="text-align: right;">0.9003</td>
+<td style="text-align: right;">0.0626</td>
+<td style="text-align: right;">[0.7796, 1.0218]</td>
+</tr>
+<tr class="odd">
+<td>間接効果
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>a</mi><mi>b</mi></mrow><annotation encoding="application/x-tex">ab</annotation></semantics></math></td>
+<td style="text-align: right;">0.7399</td>
+<td style="text-align: right;">0.0571</td>
+<td style="text-align: right;">[0.6356, 0.8592]</td>
+</tr>
+<tr class="even">
+<td>直接効果</td>
+<td style="text-align: right;">−0.1190</td>
+<td style="text-align: right;">0.0800</td>
+<td style="text-align: right;">[−0.2788, 0.0332]</td>
+</tr>
+<tr class="odd">
+<td>総効果</td>
+<td style="text-align: right;">0.6209</td>
+<td style="text-align: right;">0.0474</td>
+<td style="text-align: right;">[0.5194, 0.7048]</td>
+</tr>
+</tbody>
+</table>
+<p>顧客期待から媒介成分への経路
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>a</mi><annotation encoding="application/x-tex">a</annotation></semantics></math>
+と、媒介成分から顧客満足への経路
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>b</mi><annotation encoding="application/x-tex">b</annotation></semantics></math>
+は、ともに正の値でした。間接効果
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>a</mi><mi>b</mi></mrow><annotation encoding="application/x-tex">ab</annotation></semantics></math>
+の95%ブートストラップ区間は 0を含みませんでした。</p>
+<p>一方、直接効果の区間は0を含みました。このデータとPLS-EMAの目的関数の
+範囲では、顧客期待と満足の関係は、品質・価値項目から構成される媒介成分に
+強く表現されています。</p>
+<h3 id="媒介候補項目のloading">媒介候補項目のloading</h3>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>fit<span class="sc">$</span>mediators</span></code></pre></div>
+<table>
+<thead>
+<tr class="header">
+<th style="text-align: right;">順位</th>
+<th>項目</th>
+<th>構成概念</th>
+<th style="text-align: right;">Loading</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: right;">1</td>
+<td>QUAL2</td>
+<td>知覚品質</td>
+<td style="text-align: right;">0.8397</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">2</td>
+<td>VAL1</td>
+<td>知覚価値</td>
+<td style="text-align: right;">0.8268</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">3</td>
+<td>QUAL4</td>
+<td>知覚品質</td>
+<td style="text-align: right;">0.7857</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">4</td>
+<td>VAL4</td>
+<td>知覚価値</td>
+<td style="text-align: right;">0.7830</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">5</td>
+<td>QUAL5</td>
+<td>知覚品質</td>
+<td style="text-align: right;">0.7718</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">6</td>
+<td>QUAL1</td>
+<td>知覚品質</td>
+<td style="text-align: right;">0.7523</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">7</td>
+<td>QUAL3</td>
+<td>知覚品質</td>
+<td style="text-align: right;">0.7239</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">8</td>
+<td>VAL2</td>
+<td>知覚価値</td>
+<td style="text-align: right;">0.7198</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">9</td>
+<td>VAL3</td>
+<td>知覚価値</td>
+<td style="text-align: right;">0.6602</td>
+</tr>
+</tbody>
+</table>
+<p>知覚品質と知覚価値の両方の項目が、媒介成分に高いloadingを示しました。
+抽出された成分は、品質だけ、または価値だけを表すものではなく、品質と価値を
+統合した顧客認知の成分と解釈できます。</p>
+<h2 id="結果の取り出し方">結果の取り出し方</h2>
+<p><code>pls_ema()</code> の結果から、次の情報を取り出せます。</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 経路効果とブートストラップ区間</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>fit<span class="sc">$</span>effects</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a><span class="co"># 媒介候補のweightとloading</span></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>fit<span class="sc">$</span>mediators</span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a><span class="co"># 目的関数を構成する共分散</span></span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>fit<span class="sc">$</span>covariance</span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a><span class="co"># 標準化されたX、M、Yスコア</span></span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(fit<span class="sc">$</span>scores)</span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a><span class="co"># ブートストラップごとの効果推定値</span></span>
+<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(fit<span class="sc">$</span>bootstrap)</span>
+<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-16"><a href="#cb7-16" aria-hidden="true" tabindex="-1"></a><span class="co"># loadingsパッケージが返すマルチセットPLS結果</span></span>
+<span id="cb7-17"><a href="#cb7-17" aria-hidden="true" tabindex="-1"></a>fit<span class="sc">$</span>multiset_fit</span></code></pre></div>
+<h2 id="解釈上の注意">解釈上の注意</h2>
+<p>PLS-EMAは探索的な多変量成分抽出法です。</p>
+<p>この分析では、顧客満足
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>Y</mi><annotation encoding="application/x-tex">Y</annotation></semantics></math>
+の情報を使用して媒介成分
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>M</mi><annotation encoding="application/x-tex">M</annotation></semantics></math>
+を構成して
+います。そのため、通常の確認的PLS-SEM媒介分析や、今井らの方法による
+因果媒介分析とは異なります。</p>
+<p>このデモから、次のように結論することはできません。</p>
+<ul>
+<li>顧客期待が品質・価値認知を因果的に変化させた</li>
+<li>品質・価値認知が顧客満足を因果的に変化させた</li>
+<li>未測定の交絡が存在しない</li>
+<li>品質・価値認知の時間的順序が保証されている</li>
+</ul>
+<p>報告された
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>a</mi><mi>b</mi></mrow><annotation encoding="application/x-tex">ab</annotation></semantics></math>
+は、PLS-EMAで抽出したスコア上の記述的な間接効果です。
+本結果は、「顧客期待と顧客満足を結ぶ品質・価値認知の多変量成分が得られた」
+という探索的な結果として解釈します。</p>
+<h2 id="まとめ">まとめ</h2>
+<p>PLS-EMAを銀行顧客満足度データに適用し、顧客期待と顧客満足を結ぶ
+品質・価値認知の多変量成分を抽出しました。</p>
+<ul>
+<li>顧客期待から媒介成分への経路は0.8218</li>
+<li>媒介成分から顧客満足への経路は0.9003</li>
+<li>間接効果は0.7399</li>
+<li>品質と価値の両方の項目が媒介成分に寄与</li>
+</ul>
+<p>PLS-EMAは、多数の質問項目から媒介構造と整合する成分を探索する方法として
+利用できます。ただし、因果媒介分析とは区別して使用する必要があります。</p>
+<h2 id="再現環境">再現環境</h2>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sessionInfo</span>()</span></code></pre></div>
+<p>解析には次のRパッケージを使用します。</p>
+<ul>
+<li><code>lvsem</code></li>
+<li><code>loadings</code></li>
+<li><code>plspm</code></li>
+</ul>
+</body>
+</html>
