@@ -9,6 +9,7 @@ body {
 	color: #ffffff;
 	font-family: system-ui, sans-serif;
 	margin: 40px;
+	max-width: 900px;
 	line-height: 1.7;
 }
 
@@ -26,122 +27,56 @@ a:focus {
 
 h3 {
 	padding-bottom: 3px;
-	border-style: solid;
-	border-color: gray;
-	border-width: 0px 0px 1px 0px;
+	border-bottom: 1px solid gray;
 	font-weight: bold;
-	width: 600px;
 	font-size: 12pt;
 }
 </style>
 </head>
 <body>
 
-<BR><BR>
-山本博之 / 連絡先 h.yama2396@gmail.com / <a href="https://hiroyukiyamamoto.github.io/sikajiro/">メタボロミクスのためのインフォマティクス研究</a> / 
-<P><P>
+<p>山本博之 / 連絡先 h.yama2396@gmail.com / <a href="https://hiroyukiyamamoto.github.io/sikajiro/">メタボロミクスのためのインフォマティクス研究</a> /</p>
 
-データサイエンス全般に関する研究・教育に取り組んでいます。<BR>
-Partial Least Squares、構造方程式モデリング、探索的媒介分析を中心としたRパッケージの開発と、多変量解析の講義資料を公開しています。
+<p>Partial Least Squares、構造方程式モデリング、探索的媒介分析を中心に、データサイエンスの研究・教育に取り組んでいます。Rパッケージ、デモ解析、講義資料を公開しています。</p>
+
+<h3>lvsem Rパッケージ</h3>
+
+<ul>
+<li><a href="https://github.com/otomamayikuyorih/lvsem">lvsem</a>：PLS-SEMと探索的媒介分析のためのRパッケージです。</li>
+<li><a href="https://github.com/otomamayikuyorih/lvsem/tree/main/lvsemEnterpriseData">lvsemEnterpriseData</a>：lvsemに含まれる企業データ集です（<a href="https://github.com/otomamayikuyorih/lvsem/tree/main/lvsemEnterpriseData/demos">デモ</a>）。</li>
+</ul>
 
 <h3>Partial Least Squares Structural Equation Modeling（PLS-SEM）</h3>
 
 <ul>
-<li>研究
-	<ul>
-	<li>マルチセットPLSに基づく、反復計算を明示的に必要としないPLS-SEMを研究しています。</li>
-	<li>アンケートやマーケティング調査などの潜在変数モデルを扱います。</li>
-	</ul>
-</li>
-<li>デモデータ解析
-	<ul>
-	<li><a href="demo/data000/data000_analysis.html">高松市のウェルビーイング指標アンケートデータ</a></li>
-	<li><a href="demo/data001/data001_analysis.html">ラグジュアリー消費に関するマーケティングデータ</a></li>
-	<li><a href="demo/data002/data002_analysis.html">乳製品ブランドにおける顧客満足・ブランド態度・購買意向データ</a></li>
-	<li><a href="demo/data003/data003_analysis.html">医療機器受注におけるサプライチェーンリスク管理データ</a></li>
-	<li><a href="demo/data004/data004_analysis.html">AI導入・デジタル能力・戦略的意思決定品質データ</a></li>
-	</ul>
-</li>
-<li>参考資料
-	<ul>
-	<li><a href="https://jxiv.jst.go.jp/index.php/jxiv/preprint/view/2443">Yamamoto H. "Iteration-Free PLS-SEM via Multiset PLS", Jxiv (2026).</a></li>
-	</ul>
-</li>
+<li>研究：マルチセットPLSに基づく、反復計算を明示的に必要としないPLS-SEMを研究しています。</li>
+<li>デモ解析：<a href="demo/data000/data000_analysis.html">ウェルビーイング</a> / <a href="demo/data001/data001_analysis.html">ラグジュアリー消費</a> / <a href="demo/data002/data002_analysis.html">乳製品ブランド</a> / <a href="demo/data003/data003_analysis.html">サプライチェーンリスク</a> / <a href="demo/data004/data004_analysis.html">AI導入と意思決定</a></li>
+<li>論文：<a href="https://jxiv.jst.go.jp/index.php/jxiv/preprint/view/2443">Yamamoto H. "Iteration-Free PLS-SEM via Multiset PLS", Jxiv (2026).</a></li>
 </ul>
 
 <h3>Partial Least Squares Exploratory Mediation Analysis (PLS-EMA)</h3>
 
 <ul>
-<li>概要
-	<ul>
-	<li>探索的媒介分析のためのPartial Least Squares（PLS）です。</li>
-	<li>説明変数、媒介候補、結果変数を3つのブロックとして扱う探索的媒介分析です。</li>
-	<li>媒介構造と整合する多変量成分をマルチセットPLSによって抽出します。</li>
-	<li>通常の確認的PLS-SEM媒介分析や因果媒介分析とは区別して解釈します。</li>
-	</ul>
-</li>
-<li>デモデータ解析
-	<ul>
-	<li><a href="bank_customer_satisfaction_pls_ema.html">銀行顧客満足度データ：顧客期待、品質・価値認知、顧客満足の探索的媒介分析</a></li>
-	</ul>
-</li>
-<li>参考資料
-	<ul>
-	<li>Yamamoto H. "PLS-EMA: Partial Least Squares Exploratory Mediation Analysis"（Jxivプレプリント準備中）</li>
-	</ul>
-</li>
+<li>説明変数、媒介候補、結果変数を3ブロックとして扱い、媒介構造と整合する多変量成分を抽出します。</li>
+<li>デモ解析：<a href="bank_customer_satisfaction_pls_ema.html">銀行顧客満足度データの探索的媒介分析</a></li>
+<li>論文：Yamamoto H. "PLS-EMA: Partial Least Squares Exploratory Mediation Analysis"（Jxivプレプリント準備中）</li>
 </ul>
 
-<h3>lvsem Rパッケージ</h3>
+<h3>PLS-SEMの派生・発展手法</h3>
 
 <ul>
-<li>Rパッケージ
-	<ul>
-	<li><a href="https://github.com/otomamayikuyorih/lvsem">lvsem</a></li>
-	<li>マルチセットPLSによる潜在変数スコアの作成と構造経路の推定を行います。</li>
-	<li>直接効果、間接効果、総効果、ブートストラップ、測定モデルの評価に対応します。</li>
-	<li>探索的媒介分析のための <code>pls_ema()</code> を実装しています。</li>
-	</ul>
-</li>
+<li>異質性・セグメンテーション：FIMIX-PLS / REBUS-PLS / PLS-POS / PLS-TPM / PLS-GAS</li>
+<li>グループ比較：PLS-MGA</li>
+<li>予測・実務評価：PLSpredict / IPMA</li>
+<li>これらの特徴、用途、推定方法の違いを調査・整理します。</li>
 </ul>
 
-<h3>lvsemのデータ</h3>
+<h3>データサイエンス教育</h3>
 
 <ul>
-<li>Rデータパッケージ
-	<ul>
-	<li>PLS-SEMのためのRデータパッケージ <a href="https://github.com/otomamayikuyorih/lvsemEnterpriseData">lvsemEnterpriseData</a></li>
-	<li>企業活動、組織能力、デジタル化、意思決定、サプライチェーンなどのデータを収録しています。</li>
-	</ul>
-</li>
-<li>企業データ解析
-	<ul>
-	<li><a href="https://github.com/otomamayikuyorih/lvsemEnterpriseData/tree/main/demos">デモ</a></li>
-	</ul>
-</li>
-<li>文系データサイエンス
-	<ul>
-	<li>顧客満足度、ブランド態度、購買意向、ウェルビーイングなどのデータ解析を扱います。</li>
-	</ul>
-</li>
-</ul>
-
-<H3>資格・データサイエンス教育</H3>
-
-<ul>
-<li>教育用資料
-	<ul>
-	<li><a href="seminar/001/seminar001.html">多変量解析入門</a>：過去に実施した有償セミナーを講義形式に編集しました。</li>
-	<li>実データの読み方、可視化、分析結果の説明を扱います。</li>
-	<li><a href="old_seminar.html">過去の開催</a></li>
-	</ul>
-</li>
-<li>資格
-	<ul>
-	<li>統計検定2級、3級（2011年）</li>
-	<li>国際資格（RSS）MODULE 2 PROBABILITY MODELS（2013年）</li>
-	</ul>
-</li>
+<li><a href="seminar/001/seminar001.html">多変量解析入門</a>：実データの読み方、可視化、分析結果の説明を扱います。</li>
+<li><a href="old_seminar.html">過去の開催</a></li>
+<li>資格：統計検定2級・3級（2011年）、RSS Module 2 Probability Models（2013年）</li>
 </ul>
 	
 </body>
