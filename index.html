@@ -2,8 +2,14 @@
 <html lang="ja">
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>データサイエンス研究・教育</title>
 <style>
+html {
+	-webkit-text-size-adjust: 100%;
+	text-size-adjust: 100%;
+}
+
 body {
 	background: #d8d8d3;
 	color: #222222;
@@ -32,11 +38,28 @@ h3 {
 	max-width: 600px;
 	font-size: 12pt;
 }
+
+@media (max-width: 600px) {
+	body {
+		margin: 24px 20px;
+		font-size: 17px;
+		line-height: 1.8;
+	}
+
+	h3 {
+		margin-top: 32px;
+		font-size: 18px;
+	}
+
+	ul {
+		padding-left: 24px;
+	}
+}
 </style>
 </head>
 <body>
 
-<p>山本博之 / 連絡先 h.yama2396@gmail.com / <a href="https://hiroyukiyamamoto.github.io/sikajiro/">メタボロミクスのためのインフォマティクス研究</a> / <a href="https://otomamayikuyorih.github.io/AI/">AI活動記録</a> / </p>
+<p>山本博之 / 連絡先 h.yama2396@gmail.com / <a href="https://hiroyukiyamamoto.github.io/sikajiro/">メタボロミクスのためのインフォマティクス研究</a> /</p>
 
 <p>Partial Least Squaresによる構造方程式モデリングを中心に、社会科学・ビジネス分野のデータサイエンスの研究・教育に取り組んでいます。<br>
 Rパッケージ、デモ解析、講義資料を公開しています。</p>
@@ -59,7 +82,7 @@ Rパッケージ、デモ解析、講義資料を公開しています。</p>
 <h3>Partial Least Squares Exploratory Mediation Analysis (PLS-EMA)</h3>
 
 <ul>
-<li><strong>媒介分析のためのPLS</strong>として、説明変数、媒介候補、結果変数を3ブロックで扱い、媒介構造と整合する多変量成分を抽出します。</li>
+<li><strong>媒介分析のためのPLS-SEM</strong>として、説明変数、媒介候補、結果変数を3ブロックで扱い、媒介構造と整合する多変量成分を抽出します。</li>
 <li>デモ解析：<a href="bank_customer_satisfaction_pls_ema.html">銀行顧客満足度データの探索的媒介分析</a></li>
 <li>論文：Yamamoto H. "PLS-EMA: Partial Least Squares Exploratory Mediation Analysis"（Jxivプレプリント準備中）</li>
 </ul>
