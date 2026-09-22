@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="description" content="社会科学・ビジネス分野の研究、PLS-SEM、AI活用、企業分析に関する活動を紹介します。">
-<title>ビジネス・社会科学研究</title>
+<title>ビジネス・社会科学のデータサイエンス</title>
 <style>
 html {
 	-webkit-text-size-adjust: 100%;
@@ -40,6 +40,34 @@ h3 {
 	font-size: 12pt;
 }
 
+h4 {
+	margin: 24px 0 10px;
+	font-size: 11pt;
+}
+
+.projects {
+	display: grid;
+	grid-template-columns: repeat(2, minmax(0, 1fr));
+	gap: 28px 32px;
+	max-width: 1000px;
+}
+
+.project {
+	min-width: 0;
+}
+
+.screenshot {
+	display: block;
+	width: 100%;
+	height: auto;
+	border: 1px solid #7d8586;
+}
+
+.meta {
+	color: #c2c5c5;
+	font-size: 10pt;
+}
+
 @media (max-width: 600px) {
 	body {
 		margin: 24px 20px;
@@ -52,15 +80,24 @@ h3 {
 		font-size: 18px;
 	}
 
+	h4 {
+		font-size: 16px;
+	}
+
 	ul {
 		padding-left: 24px;
+	}
+
+	.projects {
+		grid-template-columns: 1fr;
+		gap: 38px;
 	}
 }
 </style>
 </head>
 <body>
 
-<p>ビジネス・社会科学研究 / <a href="https://hiroyukiyamamoto.github.io/sikajiro/">メタボロミクスのためのインフォマティクス研究</a> / <a href="https://otomamayikuyorih.github.io/AI/">AIアプリ開発記録(生命科学)</a> / </p>
+<p>ビジネス・社会科学のデータサイエンス / <a href="https://hiroyukiyamamoto.github.io/sikajiro/">メタボロミクスのためのインフォマティクス</a> / <a href="https://otomamayikuyorih.github.io/AI/">AIアプリ開発記録(生命科学)</a> / </p>
 
 <p>社会科学・ビジネス分野の研究と、AIを活用した情報探索・企業分析に取り組んでいます。<br>
 Partial Least Squaresによる構造方程式モデリング、Rパッケージ、デモ解析、講義資料、関連プロジェクトを公開しています。</p>
@@ -99,20 +136,22 @@ Partial Least Squaresによる構造方程式モデリング、Rパッケージ�
 
 <h3>関連プロジェクト</h3>
 
-<ul>
-<li>AI4PB Research Agent
-  <ul>
-  <li>論文検索、本文取得、情報ギャップ評価、再現実験ガイドを支援する研究調査エージェントです。</li>
-  <li><a href="https://github.com/otomamayikuyorih/AI/tree/main/AI4PB">GitHubリポジトリ</a></li>
-  </ul>
-</li>
-<li>Life Science BI / AI Dashboards
-  <ul>
-  <li>ライフサイエンス企業の事業構造、研究開発、AI / DX戦略、公開情報を比較・可視化します。</li>
-  <li><a href="https://github.com/otomamayikuyorih/AI/tree/main/life-science/bidash">BIダッシュボード</a> / <a href="https://github.com/otomamayikuyorih/AI/tree/main/life-science/aidash">AIダッシュボード</a></li>
-  </ul>
-</li>
-</ul>
+<div class="projects">
+<div class="project">
+<h4>Stanford AI4PB Research Agent</h4>
+<img class="screenshot" src="assets/ai4pb-research-agent.svg" alt="Stanford AI4PB Research Agentで公開研究成果を自律調査する画面">
+<p><strong>公開研究成果・論文を対象に、研究テーマの整理や再現実験のしやすさを自律調査する研究エージェント。</strong></p>
+<p>Stanford AI for Public Benefit Lab（AI4PB）の公開情報を対象に、論文検索、本文取得、情報ギャップ評価、再現実験ガイドの作成を支援します。Google Cloud上で動作し、調査プロセスを段階的に実行します。</p>
+<p class="meta">AI Agent / Literature research / Reproducibility / Google Cloud</p>
+<p><a href="https://github.com/otomamayikuyorih/AI/tree/main/AI4PB">GitHubリポジトリ</a></p>
+</div>
+
+<div class="project">
+<h4>Life Science BI / AI Dashboards</h4>
+<p>ライフサイエンス企業の事業構造、研究開発、AI / DX戦略、公開情報を比較・可視化します。</p>
+<p><a href="https://github.com/otomamayikuyorih/AI/tree/main/life-science/bidash">BIダッシュボード</a> / <a href="https://github.com/otomamayikuyorih/AI/tree/main/life-science/aidash">AIダッシュボード</a></p>
+</div>
+</div>
 
 <h3>教育・資格</h3>
 
